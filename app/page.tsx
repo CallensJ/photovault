@@ -4,7 +4,7 @@ import { dummyCards } from "./data/dummyCard";
 
 export default function Home() {
   return (
-    <main className="flex flex-wrap gap-4 justify-center">
+    <main className="flex flex-wrap gap-4 justify-center  pt-16">
       {dummyCards.map((card) => (
         <Card
         key={card.id}
