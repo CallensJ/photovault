@@ -2,6 +2,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import React, { useState } from "react";
 import { FaHeart, FaDownload, FaEllipsisH } from "react-icons/fa";
 
@@ -116,14 +117,16 @@ export default function Card({
         <div className="p-4">
           {/* Header: Avatar + Views */}
           <div className="flex justify-between items-center mb-2">
-            <a href={`/profile/${username}`} className="relative w-10 h-10">
+          <Link href={`/profile/${username}`} className="relative w-10 h-10">
+         
               <Image
                 src={avatarUrl}
                 alt="Avatar"
                 className="rounded-full object-cover"
                 fill
               />
-            </a>
+            
+            </Link>
             <span className="text-sm text-gray-500">👁️ {views} vues</span>
           </div>
 
