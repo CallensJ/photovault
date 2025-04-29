@@ -1,132 +1,153 @@
-"use client";
-
 import { useState } from "react";
 
+type FormData = {
+  username: string;
+  email: string;
+  age: string;
+  bio: string;
+  city: string;
+  country: string;
+  gender: string;
+  password: string;
+};
+
+type FormErrors = Partial<Record<keyof FormData, string>>;
+
 export default function UserInfoSettings() {
-  const [formData, setFormData] = useState({
-    displayName: "",
-    bio: "",
+  const [formData, setFormData] = useState<FormData>({
+    username: "lara",
     email: "",
     age: "",
-    gender: "",
-    country: "",
+    bio: "",
     city: "",
+    country: "",
+    gender: "",
     password: "",
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const [errors, setErrors] = useState<FormErrors>({});
+
+  function handleChange(
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+  }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  function validate() {
+    const newErrors: FormErrors = {};
+
+    if (!formData.email.includes("@")) newErrors.email = "Adresse email invalide";
+    if (
+      formData.age &&
+      (isNaN(Number(formData.age)) || Number(formData.age) <= 0 || Number(formData.age) > 120)
+    ) {
+      newErrors.age = "Âge invalide";
+    }
+    if (formData.bio.length > 250) newErrors.bio = "La bio est trop longue (max 250 caractères)";
+    if (formData.password && formData.password.length < 6)
+      newErrors.password = "Mot de passe trop court (min 6 caractères)";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  }
+
+  function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    alert("Données enregistrées !");
-    // Intégrer l’appel au backend ici
-  };
+    if (!validate()) return;
+
+    alert("Données valides !");
+  }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <div>
-        <label className="block font-medium">Pseudo</label>
-        <input
-          type="text"
-          name="displayName"
-          value={formData.displayName}
-          onChange={handleChange}
-          className="w-full border px-3 py-2 rounded-lg"
-        />
-      </div>
+  {/* Email */}
+  <div>
+    <label htmlFor="email" className="block font-medium">
+      Email
+    </label>
+    <input
+      id="email"
+      name="email"
+      value={formData.email}
+      onChange={handleChange}
+      type="email"
+      className={`mt-1 w-full px-4 py-2 rounded-lg border ${
+        errors.email ? "border-red-500 bg-red-50" : "border-gray-300"
+      }`}
+    />
+    {errors.email && (
+      <p className="text-sm text-red-600 mt-1 animate-fade-in">{errors.email}</p>
+    )}
+  </div>
 
-      <div>
-        <label className="block font-medium">Bio</label>
-        <textarea
-          name="bio"
-          value={formData.bio}
-          onChange={handleChange}
-          rows={3}
-          className="w-full border px-3 py-2 rounded-lg"
-        />
-      </div>
+  {/* Age */}
+  <div>
+    <label htmlFor="age" className="block font-medium">
+      Âge
+    </label>
+    <input
+      id="age"
+      name="age"
+      value={formData.age}
+      onChange={handleChange}
+      type="text"
+      className={`mt-1 w-full px-4 py-2 rounded-lg border ${
+        errors.age ? "border-red-500 bg-red-50" : "border-gray-300"
+      }`}
+    />
+    {errors.age && (
+      <p className="text-sm text-red-600 mt-1 animate-fade-in">{errors.age}</p>
+    )}
+  </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label className="block font-medium">Email</label>
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            className="w-full border px-3 py-2 rounded-lg"
-          />
-        </div>
-        <div>
-          <label className="block font-medium">Âge</label>
-          <input
-            type="number"
-            name="age"
-            value={formData.age}
-            onChange={handleChange}
-            className="w-full border px-3 py-2 rounded-lg"
-          />
-        </div>
-      </div>
+  {/* Bio */}
+  <div>
+    <label htmlFor="bio" className="block font-medium">
+      Bio
+    </label>
+    <textarea
+      id="bio"
+      name="bio"
+      value={formData.bio}
+      onChange={handleChange}
+      className={`mt-1 w-full px-4 py-2 rounded-lg border ${
+        errors.bio ? "border-red-500 bg-red-50" : "border-gray-300"
+      }`}
+      rows={4}
+    />
+    {errors.bio && (
+      <p className="text-sm text-red-600 mt-1 animate-fade-in">{errors.bio}</p>
+    )}
+  </div>
 
-      <div>
-        <label className="block font-medium">Genre</label>
-        <select
-          name="gender"
-          value={formData.gender}
-          onChange={handleChange}
-          className="w-full border px-3 py-2 rounded-lg"
-        >
-          <option value="">Sélectionnez</option>
-          <option value="male">Homme</option>
-          <option value="female">Femme</option>
-          <option value="other">Autre</option>
-        </select>
-      </div>
+  {/* Password */}
+  <div>
+    <label htmlFor="password" className="block font-medium">
+      Mot de passe
+    </label>
+    <input
+      id="password"
+      name="password"
+      value={formData.password}
+      onChange={handleChange}
+      type="password"
+      className={`mt-1 w-full px-4 py-2 rounded-lg border ${
+        errors.password ? "border-red-500 bg-red-50" : "border-gray-300"
+      }`}
+    />
+    {errors.password && (
+      <p className="text-sm text-red-600 mt-1 animate-fade-in">{errors.password}</p>
+    )}
+  </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label className="block font-medium">Pays</label>
-          <input
-            type="text"
-            name="country"
-            value={formData.country}
-            onChange={handleChange}
-            className="w-full border px-3 py-2 rounded-lg"
-          />
-        </div>
-        <div>
-          <label className="block font-medium">Ville</label>
-          <input
-            type="text"
-            name="city"
-            value={formData.city}
-            onChange={handleChange}
-            className="w-full border px-3 py-2 rounded-lg"
-          />
-        </div>
-      </div>
+  <button
+    type="submit"
+    className="mt-4 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
+  >
+    Sauvegarder
+  </button>
+</form>
 
-      <div>
-        <label className="block font-medium">Mot de passe</label>
-        <input
-          type="password"
-          name="password"
-          value={formData.password}
-          onChange={handleChange}
-          className="w-full border px-3 py-2 rounded-lg"
-        />
-      </div>
-
-      <button
-        type="submit"
-        className="px-6 py-2 bg-green-600 text-white rounded-lg"
-      >
-        Enregistrer les modifications
-      </button>
-    </form>
   );
 }
