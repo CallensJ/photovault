@@ -15,19 +15,11 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="max-w-5xl mx-auto mt-6 px-4">
-      {/* Cover image */}
-      <div className="w-full h-64 relative rounded-xl overflow-hidden mb-4">
-        <Image
-          src={user.coverImage}
-          alt="Cover"
-          fill
-          className="object-cover"
-        />
-      </div>
+    <div className="max-w-5xl mx-auto mt-6 px-4 pb-7 pt-7">
+
 
       {/* Avatar + infos */}
-      <div className="flex items-center gap-4 mb-6">
+      <div className="flex items-center gap-4 mb-6 pb-7">
         <div className="relative w-24 h-24 rounded-full overflow-hidden border-4 border-white -mt-16">
           <Image src={user.avatarUrl} alt={user.name} fill className="object-cover" />
         </div>
