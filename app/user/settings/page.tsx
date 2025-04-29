@@ -2,6 +2,7 @@
 "use client";
 
 import { useState } from "react";
+import AvatarSettings from "./components/AvatarSettings";
 
 const tabs = [
   "Profil",
@@ -39,11 +40,11 @@ export default function UserSettings() {
       <section className="flex-1 bg-white p-6 rounded-xl shadow-md">
         {activeTab === "Profil" && (
           <div>
-            <h2 className="text-xl font-semibold mb-4">
-              Modifier votre profil
-            </h2>
+            <h2 className="text-xl font-semibold mb-4"> </h2>
+             <AvatarSettings />
+           
             {/* Ici tu pourrais importer <AvatarSettings /> et <InfoSettings /> */}
-            <p>[Formulaire de modification d’avatar et d’infos]</p>
+            {/* <p>[Formulaire de modification d’avatar et d’infos]</p> */}
           </div>
         )}
         {activeTab === "Photos likées" && (
