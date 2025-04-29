@@ -3,6 +3,7 @@
 
 import { useState } from "react";
 import AvatarSettings from "./components/AvatarSettings";
+import UserInfoSettings from "./components/UserInfoSettings";
 
 const tabs = [
   "Profil",
@@ -42,6 +43,7 @@ export default function UserSettings() {
           <div>
             <h2 className="text-xl font-semibold mb-4"> </h2>
              <AvatarSettings />
+             <UserInfoSettings />
            
             {/* Ici tu pourrais importer <AvatarSettings /> et <InfoSettings /> */}
             {/* <p>[Formulaire de modification d’avatar et d’infos]</p> */}
