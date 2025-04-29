@@ -3,10 +3,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import NavSearchBar from "./NavSearchBar";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isSearchVisible, setIsSearchVisible] = useState(false);
+
   const isAuthenticated = false; // ou true si tu veux tester
   const router = useRouter();
 
@@ -15,10 +16,6 @@ export default function Navbar() {
     setIsMenuOpen(!isMenuOpen);
   };
 
-  // Toggle search bar visibility
-  const toggleSearch = () => {
-    setIsSearchVisible(!isSearchVisible);
-  };
 
   return (
     <nav className="bg-gray-800 text-white p-4">
@@ -39,23 +36,9 @@ export default function Navbar() {
           </Link>
         </div>
 
-        {/* Desktop Search Bar */}
-        <div
-          className={`hidden md:flex flex-1 justify-center items-center ${
-            isSearchVisible ? "" : "hidden"
-          }`}
-        >
-          <input
-            type="text"
-            className="p-2 w-1/3 rounded-md bg-gray-700 text-white"
-            placeholder="Rechercher des photos..."
-          />
-        </div>
+      <NavSearchBar />
 
-        {/* Mobile Search Toggle Button */}
-        <button className="md:hidden text-white" onClick={toggleSearch}>
-          🔍
-        </button>
+
 
         {/* Authentication / Avatar */}
         <div className="flex items-center space-x-4">
