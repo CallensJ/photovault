@@ -51,7 +51,7 @@ export default function Card({
         <div className="mt-2 flex items-center justify-between px-2">
           <div className="flex items-center gap-2">
             {/* Link ajouté autour de l'avatar */}
-            <Link href={`/profile/${username.replace('@', '')}`} passHref>
+            <Link href={`/profile/${username.replace("@", "")}`} passHref>
               <div className="relative w-8 h-8 cursor-pointer">
                 <Image
                   src={avatarUrl}
