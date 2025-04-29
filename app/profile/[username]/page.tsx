@@ -5,9 +5,11 @@ import { dummyUsers } from "@/app/data/dummyUsers";
 import Image from "next/image";
 import { useState } from "react";
 import CardModal from "@/app/components/modals/CardModal"; // Assurez-vous que le chemin est correct
+import UserProfileFormMsg from "@/app/components/modals/UserProfileFormMsg";
 
 export default function ProfilePage() {
   const [isFollowed, setIsFollowed] = useState(false);
+  const [showMessage, setShowMessage] = useState(false);
   const { username } = useParams();
 
   // On récupère l'utilisateur sans le "@" si l'URL est sans
@@ -81,8 +83,11 @@ export default function ProfilePage() {
             >
               {isFollowed ? "Followed" : "Follow"}
             </button>
-            <button className="px-4 py-2 rounded-lg bg-gray-600 text-white">
-              Message
+            <button
+              onClick={() => setShowMessage((prev) => !prev)}
+              className="px-4 py-2 rounded-lg bg-gray-600 text-white"
+            >
+              {showMessage ? "Galerie" : "Message"}
             </button>
           </div>
         </div>
@@ -91,27 +96,39 @@ export default function ProfilePage() {
       {/* Bio */}
       <p className="mb-6 text-gray-700 italic">{user.bio}</p>
 
-      {/* Galerie */}
-      <h2 className="text-xl font-bold mb-4">Galerie</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        {user.photos.map((photo) => (
-          <div
-            key={photo.id}
-            className="relative w-full h-64 rounded-xl overflow-hidden shadow-md cursor-pointer"
-            onClick={() => openModal(photo)} // Ouvrir la modale au clic sur l'image
-          >
-            <Image
-              src={photo.url}
-              alt={photo.title}
-              fill
-              className="object-cover"
-            />
-            <div className="absolute bottom-0 bg-black bg-opacity-60 text-white text-sm p-2 w-full">
-              <strong>{photo.title}</strong>
+
+
+
+
+      {/* Galerie OU Message */}
+      <div className="mt-6">
+        {showMessage ? (
+          <UserProfileFormMsg />
+        ) : (
+          <>
+            <h2 className="text-xl font-bold mb-4">Galerie</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              {user.photos.map((photo) => (
+                <div
+                  key={photo.id}
+                  className="relative w-full h-64 rounded-xl overflow-hidden shadow-md"
+                >
+                  <Image
+                    src={photo.url}
+                    alt={photo.title}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+              ))}
             </div>
-          </div>
-        ))}
+          </>
+        )}
       </div>
+
+
+
+
 
       {/* Affichage de la modale si showModal est true */}
       {showModal && selectedImage && (
