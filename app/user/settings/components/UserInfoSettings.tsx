@@ -1,4 +1,5 @@
 import { useState } from "react";
+import DeleteAccountButton from "./DeleteAccountButton";
 
 type FormData = {
   username: string;
@@ -190,13 +191,13 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   )}
 </div>
 
-
       <button
         type="submit"
-        className="mt-4 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
+        className=" cursor-pointer mt-4 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
       >
         Sauvegarder
       </button>
+  <DeleteAccountButton />
     </form>
   );
 }
