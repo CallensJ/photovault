@@ -2,10 +2,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchVisible, setIsSearchVisible] = useState(false);
+  const isAuthenticated = false; // ou true si tu veux tester
+  const router = useRouter();
 
   // Toggle menu
   const toggleMenu = () => {
@@ -77,18 +80,28 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="md:hidden bg-gray-700 p-4">
-          <button className="block w-full text-left text-white py-2">
-            Login
-          </button>
-          <button className="block w-full text-left text-white py-2">
-            Signup
-          </button>
-          <button className="block w-full text-left text-white py-2">
-            Profile
-          </button>
-        </div>
-      )}
+  <div className="md:hidden bg-gray-700 p-4">
+    <button className="cursor-pointer block w-full text-left text-white py-2">
+      Login
+    </button>
+    <button className="cursor-pointer block w-full text-left text-white py-2">
+      Signup
+    </button>
+
+    {/* Profile : visible mais redirige selon auth */}
+    <button
+      className="cursor-pointer block w-full text-left text-white py-2"
+      onClick={() =>
+        isAuthenticated
+          ? router.push("/profile/ton-username") // à adapter plus tard dynamiquement
+          : router.push("/login")
+      }
+    >
+      
+      Profile
+    </button>
+  </div>
+)}
     </nav>
   );
 }
