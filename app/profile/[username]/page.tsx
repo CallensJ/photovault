@@ -52,10 +52,10 @@ export default function ProfilePage() {
               fill
               className="object-cover"
             />
-            <div className="absolute bottom-0 bg-black bg-opacity-60 text-white text-sm p-2 w-full">
+            {/* <div className="absolute bottom-0 bg-black bg-opacity-60 text-white text-sm p-2 w-full">
               <strong>{photo.title}</strong>
               <p className="text-xs">{photo.description}</p>
-            </div>
+            </div> */}
           </div>
         ))}
       </div>
