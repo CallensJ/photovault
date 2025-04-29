@@ -5,7 +5,7 @@ export const dummyCards = [
       title: "Un beau paysage",
       description: "Un coucher de soleil dans les montagnes.", // ← description obligatoire
       avatarUrl: "/images/avatars/joyce.jpg",
-      username: "@alban",
+      username: "@joyce",
       views: 234,
       fullImage: "/images/user-upload/img-1.jpg", // ← fullImage obligatoire
     },
@@ -25,7 +25,7 @@ export const dummyCards = [
       title: "Océan bleu",
       description: "Un coucher de soleil sur une plage du pacifique.", // ← description obligatoire
       avatarUrl: "/images/avatars/tamara.jpg",
-      username: "@tamara",
+      username: "@amira",
       views: 543,
       fullImage: "/images/user-upload/img-3.jpg", // ← fullImage obligatoire
     },

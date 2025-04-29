@@ -117,7 +117,7 @@ export default function Card({
         <div className="p-4">
           {/* Header: Avatar + Views */}
           <div className="flex justify-between items-center mb-2">
-          <Link href={`/profile/${username}`} className="relative w-10 h-10">
+          <Link href={`/profile/${username.replace('@', '')}`} className="relative w-10 h-10">
          
               <Image
                 src={avatarUrl}

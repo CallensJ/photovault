@@ -1,21 +1,65 @@
-export const dummyUser = {
-  username: "lara", // Sans le @
-  name: "Lara Croft",
-  bio: "Exploratrice des ruines antiques.",
-  avatarUrl: "/images/lara-avatar.jpg",
-  coverImage: "/images/lara-cover.jpg",
-  photos: [
-    {
-      id: 1,
-      url: "/images/photo1.jpg",
-      title: "Ruines",
-      description: "Exploration des ruines",
-    },
-    {
-      id: 2,
-      url: "/images/photo2.jpg",
-      title: "Aventure",
-      description: "L'aventure dans la jungle",
-    },
-  ],
-};
+export const dummyUsers = [
+  {
+    username: "@lara",
+    name: "Lara Scott",
+    email: "lara@example.com",
+    gender: "féminin",
+    bio: "Photographe passionnée de nature.",
+    country: "France",
+    city: "Lyon",
+    avatarUrl: "/images/avatars/lara.jpg",
+    coverImage: "/images/covers/lara-cover.jpg",
+    photos: [
+      {
+        id: 1,
+        url: "/images/user-upload/lara1.jpg",
+        title: "Forêt enchantée",
+        description: "Une promenade au cœur de la forêt de Brocéliande.",
+      },
+      {
+        id: 2,
+        url: "/images/user-upload/lara2.jpg",
+        title: "Montagnes du matin",
+        description: "Lever de soleil sur les Alpes.",
+      },
+    ],
+  },
+  {
+    username: "@tom",
+    name: "Tom Durand",
+    email: "tom@example.com",
+    gender: "masculin",
+    bio: "Voyageur et amateur de photographie de rue.",
+    country: "Canada",
+    city: "Montréal",
+    avatarUrl: "/images/avatars/tom.jpg",
+    coverImage: "/images/covers/tom-cover.jpg",
+    photos: [
+      {
+        id: 3,
+        url: "/images/user-upload/tom1.jpg",
+        title: "Rue animée",
+        description: "Une scène animée dans le vieux Montréal.",
+      },
+    ],
+  },
+  {
+    username: "@amira",
+    name: "Amira Benali",
+    email: "amira@example.com",
+    gender: "féminin",
+    bio: "Designer graphique et illustratrice.",
+    country: "Maroc",
+    city: "Casablanca",
+    avatarUrl: "/images/avatars/amira.jpg",
+    coverImage: "/images/covers/amira-cover.jpg",
+    photos: [
+      {
+        id: 4,
+        url: "/images/user-upload/amira1.jpg",
+        title: "Couleurs urbaines",
+        description: "Graphisme mural au centre-ville.",
+      },
+    ],
+  },
+];
