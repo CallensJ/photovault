@@ -31,7 +31,9 @@ export default function CardModal({
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState("");
-  const [openMenuCommentId, setOpenMenuCommentId] = useState<number | null>(null);
+  const [openMenuCommentId, setOpenMenuCommentId] = useState<number | null>(
+    null
+  );
 
   const handleLike = () => setLikes(likes + 1);
 
@@ -116,20 +118,30 @@ export default function CardModal({
 
         {/* Tags */}
         <div className="flex flex-wrap gap-2 mb-4">
-          <span className="bg-gray-300 text-gray-700 rounded-full py-1 px-3 text-xs">#nature</span>
-          <span className="bg-gray-300 text-gray-700 rounded-full py-1 px-3 text-xs">#photo</span>
+          <span className="bg-gray-300 text-gray-700 rounded-full py-1 px-3 text-xs">
+            #nature
+          </span>
+          <span className="bg-gray-300 text-gray-700 rounded-full py-1 px-3 text-xs">
+            #photo
+          </span>
         </div>
 
         {/* Like / Download */}
         <div className="flex gap-6 mb-4">
           <div className="flex flex-col items-center">
-            <button onClick={handleLike} className="text-red-500 hover:text-red-700">
+            <button
+              onClick={handleLike}
+              className="text-red-500 hover:text-red-700"
+            >
               <FaHeart size={24} />
             </button>
             <span className="text-white">{likes} Likes</span>
           </div>
           <div className="flex flex-col items-center">
-            <button onClick={handleDownload} className="text-blue-500 hover:text-blue-700">
+            <button
+              onClick={handleDownload}
+              className="text-blue-500 hover:text-blue-700"
+            >
               <FaDownload size={24} />
             </button>
             <span className="text-white">{downloads} Downloads</span>
@@ -183,7 +195,10 @@ export default function CardModal({
 
               {/* Menu Commentaire */}
               <div className="relative group">
-                <button onClick={() => toggleMenu(comment.id)} className="text-xl text-gray-400">
+                <button
+                  onClick={() => toggleMenu(comment.id)}
+                  className="text-xl text-gray-400"
+                >
                   ⋮
                 </button>
                 {openMenuCommentId === comment.id && (

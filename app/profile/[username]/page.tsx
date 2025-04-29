@@ -111,6 +111,7 @@ export default function ProfilePage() {
               {user.photos.map((photo) => (
                 <div
                   key={photo.id}
+                  onClick={() => openModal(photo)}
                   className="relative w-full h-64 rounded-xl overflow-hidden shadow-md"
                 >
                   <Image
