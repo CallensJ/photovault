@@ -9,23 +9,24 @@ type FormData = {
   country: string;
   gender: string;
   password: string;
+  confirmPassword: string;
 };
 
 type FormErrors = Partial<Record<keyof FormData, string>>;
 
 export default function UserInfoSettings() {
-  const [formData, setFormData] = useState<FormData>({
-    username: "lara",
-    email: "",
-    age: "",
-    bio: "",
-    city: "",
-    country: "",
-    gender: "",
-    password: "",
-  });
+    const [formData, setFormData] = useState({
+        email: "",
+        age: "",
+        bio: "",
+        password: "",
+        confirmPassword: "",
+        city: "",
+        country: "",
+        gender: "",
+      });
 
-  const [errors, setErrors] = useState<FormErrors>({});
+      const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   function handleChange(
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -47,6 +48,10 @@ export default function UserInfoSettings() {
     if (formData.bio.length > 250) newErrors.bio = "La bio est trop longue (max 250 caractères)";
     if (formData.password && formData.password.length < 6)
       newErrors.password = "Mot de passe trop court (min 6 caractères)";
+    if (formData.password && formData.password !== formData.confirmPassword) {
+        newErrors.confirmPassword = "Les mots de passe ne correspondent pas.";
+      }
+      
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -140,6 +145,26 @@ export default function UserInfoSettings() {
       <p className="text-sm text-red-600 mt-1 animate-fade-in">{errors.password}</p>
     )}
   </div>
+
+  {/* Confirm Password */}
+<div>
+  <label htmlFor="confirmPassword" className="block font-medium">
+    Confirmer le mot de passe
+  </label>
+  <input
+    id="confirmPassword"
+    name="confirmPassword"
+    value={formData.confirmPassword}
+    onChange={handleChange}
+    type="password"
+    className={`mt-1 w-full px-4 py-2 rounded-lg border ${
+      errors.confirmPassword ? "border-red-500 bg-red-50" : "border-gray-300"
+    }`}
+  />
+  {errors.confirmPassword && (
+    <p className="text-sm text-red-600 mt-1">{errors.confirmPassword}</p>
+  )}
+</div>
 
   <button
     type="submit"
