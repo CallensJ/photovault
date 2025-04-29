@@ -1,17 +1,23 @@
 // app/user/settings/page.tsx
-'use client';
+"use client";
 
-import { useState } from 'react';
+import { useState } from "react";
 
-const tabs = ['Profil', 'Photos likées', 'Utilisateurs suivis'];
+const tabs = [
+  "Profil",
+  "Photos likées",
+  "Utilisateurs suivis",
+  "Mes Abonnements",
+  "utilisateurs Abonnes",
+];
 
 export default function UserSettings() {
-  const [activeTab, setActiveTab] = useState('Profil');
+  const [activeTab, setActiveTab] = useState("Profil");
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8 flex gap-6">
       {/* Sidebar */}
-      <aside className="w-1/4">
+      <aside className="w-1/4 sticky top-24">
         <nav className="flex flex-col gap-4">
           {tabs.map((tab) => (
             <button
@@ -19,8 +25,8 @@ export default function UserSettings() {
               onClick={() => setActiveTab(tab)}
               className={`text-left px-4 py-2 rounded-lg ${
                 activeTab === tab
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-100 text-gray-800 hover:bg-gray-200"
               }`}
             >
               {tab}
@@ -31,23 +37,45 @@ export default function UserSettings() {
 
       {/* Main content */}
       <section className="flex-1 bg-white p-6 rounded-xl shadow-md">
-        {activeTab === 'Profil' && (
+        {activeTab === "Profil" && (
           <div>
-            <h2 className="text-xl font-semibold mb-4">Modifier votre profil</h2>
+            <h2 className="text-xl font-semibold mb-4">
+              Modifier votre profil
+            </h2>
             {/* Ici tu pourrais importer <AvatarSettings /> et <InfoSettings /> */}
             <p>[Formulaire de modification d’avatar et d’infos]</p>
           </div>
         )}
-        {activeTab === 'Photos likées' && (
+        {activeTab === "Photos likées" && (
           <div>
-            <h2 className="text-xl font-semibold mb-4">Photos que vous avez aimées</h2>
+            <h2 className="text-xl font-semibold mb-4">
+              Photos que vous avez aimées
+            </h2>
             <p>[Galerie des photos likées]</p>
           </div>
         )}
-        {activeTab === 'Utilisateurs suivis' && (
+        {activeTab === "Utilisateurs suivis" && (
           <div>
-            <h2 className="text-xl font-semibold mb-4">Utilisateurs que vous suivez</h2>
+            <h2 className="text-xl font-semibold mb-4">
+              Utilisateurs que vous suivez
+            </h2>
             <p>[Liste des utilisateurs suivis]</p>
+          </div>
+        )}
+        {activeTab === "Mes Abonnements" && (
+          <div>
+            <h2 className="text-xl font-semibold mb-4">
+              Utilisateurs a qui je suis abonnes
+            </h2>
+            <p>[Liste des utilisateurs a qui jai souscrit]</p>
+          </div>
+        )}
+        {activeTab === "Utilisateurs Abonnes" && (
+          <div>
+            <h2 className="text-xl font-semibold mb-4">
+              Utilisateurs qui sont abonne a moi
+            </h2>
+            <p>[Liste des utilisateurs abonnes a moi]</p>
           </div>
         )}
       </section>
