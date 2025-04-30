@@ -1,0 +1,60 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String     @id @default(uuid())
+  username    String     @unique
+  nickname    String
+  email       String     @unique
+  password    String
+  description String?
+  age         Int?
+  gender      String?
+  country     String?
+  city        String?
+  avatar      String?
+  isPremium   Boolean    @default(false)
+  createdAt   DateTime   @default(now())
+  
+  photos      Photography[]
+  comments    Comment[]
+}
+
+model Photography {
+  id          String     @id @default(uuid())
+  title       String
+  url         String
+  description String?
+  createdAt   DateTime   @default(now())
+  
+  user        User       @relation(fields: [userId], references: [id])
+  userId      String
+  
+  categories  Category[] @relation("PhotoCategories")
+  comments    Comment[]
+}
+
+model Comment {
+  id        String     @id @default(uuid())
+  content   String
+  createdAt DateTime   @default(now())
+
+  user      User       @relation(fields: [userId], references: [id])
+  userId    String
+
+  photo     Photography @relation(fields: [photoId], references: [id])
+  photoId   String
+}
+
+model Category {
+  id     String        @id @default(uuid())
+  name   String        @unique
+
+  photos Photography[] @relation("PhotoCategories")
+}
