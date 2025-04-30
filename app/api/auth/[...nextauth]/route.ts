@@ -1,64 +1,65 @@
-import NextAuth from 'next-auth'
-import CredentialsProvider from 'next-auth/providers/credentials'
-import { prisma } from '@/lib/prisma'
-import { compare } from 'bcryptjs' // ou bcrypt si tu préfères
+import NextAuth from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
+import { prisma } from "@/lib/prisma";
+import { compare } from "bcryptjs";
 
-const handler = NextAuth({
+// Définition de la configuration NextAuth
+const authHandler = NextAuth({
   providers: [
     CredentialsProvider({
-      name: 'Credentials',
+      name: "Credentials",
       credentials: {
-        email: { label: 'Email', type: 'text' },
-        password: { label: 'Password', type: 'password' },
+        email: { label: "Email", type: "text" },
+        password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
+        // Validation des informations de connexion
         if (!credentials?.email || !credentials?.password) {
-          throw new Error('Email and password are required')
+          throw new Error("Email and password are required");
         }
 
         const user = await prisma.user.findUnique({
           where: { email: credentials.email },
-        })
+        });
 
         if (!user || !user.password) {
-          throw new Error('No user found')
+          throw new Error("No user found");
         }
 
-        const isValid = await compare(credentials.password, user.password)
+        // Comparaison du mot de passe
+        const isValid = await compare(credentials.password, user.password);
 
         if (!isValid) {
-          throw new Error('Incorrect password')
+          throw new Error("Incorrect password");
         }
 
         return {
           id: user.id,
           email: user.email,
           name: user.username,
-        }
+        };
       },
     }),
   ],
   session: {
-    strategy: 'jwt',
-  },
-  pages: {
-    signIn: '/login', // à personnaliser si besoin
+    strategy: "jwt",  // Utilisation du JWT pour la session
   },
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.id = user.id
+        token.id = user.id;  // Ajout de l'ID de l'utilisateur dans le token
       }
-      return token
+      return token;
     },
     async session({ session, token }) {
-      if (token) {
-        session.user.id = token.id
-      }
-      return session
-    },
+        if (token && session.user) {
+          session.user.id = token.id as string;
+        }
+        return session;
+      },
   },
-  secret: process.env.NEXTAUTH_SECRET,
-})
+  secret: process.env.NEXTAUTH_SECRET,  // Clé secrète pour signer le JWT
+});
 
-export { handler as GET, handler as POST }
+// Exportation des handlers GET et POST pour Next.js
+export { authHandler as GET, authHandler as POST };

@@ -22,6 +22,8 @@ export async function POST(request: Request) {
 
     const { email, username, password } = validatedData;
 
+
+
     // Vérifie si l'email existe déjà
     const existingUser = await prisma.user.findUnique({
       where: { email },
