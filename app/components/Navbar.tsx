@@ -18,7 +18,7 @@ export default function Navbar() {
 
 
   return (
-    <nav className="bg-gray-800 text-white p-4">
+    <nav className="bg-[#16171b] text-white p-4">
       <div className="container mx-auto flex justify-between items-center">
         {/* Logo */}
         <div className="flex items-center space-x-2">
@@ -45,7 +45,7 @@ export default function Navbar() {
           <button className="hidden md:block bg-blue-500 text-white px-4 py-2 rounded-md">
             Login
           </button>
-          <button className="hidden md:block bg-green-500 text-white px-4 py-2 rounded-md">
+          <button className="border cursor-pointer border-[#f9572a] hover:bg-gradient-to-r hover:from-[#f9572a] hover:to-[#ffc905]hidden md:block text-white px-4 py-2 rounded-md">
             Signup
           </button>
           {/* Avatar if logged in */}

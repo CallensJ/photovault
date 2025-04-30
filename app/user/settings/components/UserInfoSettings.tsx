@@ -86,7 +86,7 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
           value={formData.email}
           onChange={handleChange}
           type="email"
-          className={`mt-1 w-full px-4 py-2 rounded-lg border ${
+          className={`mt-1 w-full px-4 py-2 rounded-lg bg-[#1c2027] border ${
             errors.email ? "border-red-500 bg-red-50" : "border-gray-300"
           }`}
         />
@@ -108,7 +108,7 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
           value={formData.age}
           onChange={handleChange}
           type="text"
-          className={`mt-1 w-full px-4 py-2 rounded-lg border ${
+          className={`mt-1 w-full px-4 py-2 rounded-lg bg-[#1c2027] border ${
             errors.age ? "border-red-500 bg-red-50" : "border-gray-300"
           }`}
         />
@@ -129,7 +129,7 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
           name="bio"
           value={formData.bio}
           onChange={handleChange}
-          className={`mt-1 w-full px-4 py-2 rounded-lg border ${
+          className={`mt-1 w-full px-4 py-2 rounded-lg bg-[#1c2027] border ${
             errors.bio ? "border-red-500 bg-red-50" : "border-gray-300"
           }`}
           rows={4}
@@ -150,7 +150,7 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     value={formData.password}
     onChange={handleChange}
     type={showPassword ? "text" : "password"}
-    className={`mt-1 w-full px-4 py-2 rounded-lg border ${
+    className={`mt-1 w-full px-4 py-2 rounded-lg bg-[#1c2027] border ${
       errors.password ? "border-red-500 bg-red-50" : "border-gray-300"
     }`}
   />
@@ -175,7 +175,7 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     value={formData.confirmPassword}
     onChange={handleChange}
     type={showConfirmPassword ? "text" : "password"}
-    className={`mt-1 w-full px-4 py-2 rounded-lg border ${
+    className={`mt-1 w-full px-4 py-2 rounded-lg bg-[#1c2027] border ${
       errors.confirmPassword ? "border-red-500 bg-red-50" : "border-gray-300"
     }`}
   />

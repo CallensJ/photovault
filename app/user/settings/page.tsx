@@ -38,7 +38,7 @@ export default function UserSettings() {
       </aside>
 
       {/* Main content */}
-      <section className="flex-1 bg-white p-6 rounded-xl shadow-md">
+      <section className="flex-1 bg-[#393a3a] p-6 rounded-xl shadow-md">
         {activeTab === "Profil" && (
           <div>
             <h2 className="text-xl font-semibold mb-4"> </h2>
