@@ -5,20 +5,23 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import NavSearchBar from "./NavSearchBar";
 import LoginForm from "@/app/components/modals/LoginForm";
-import RegisterForm from "@/app/components/modals/RegisterForm"; // Assure-toi que RegisterForm est dans ce dossier
+import RegisterForm from "@/app/components/modals/RegisterForm";
 import { useModal } from "@/app/context/ModalContext";
+import { useSession } from "next-auth/react";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
   const { openLogin, openSignup } = useModal();
-
-  const isAuthenticated = false; // Remplace cela par une vérification d'authentification réelle
   const router = useRouter();
+  const { data: session } = useSession(); // On utilise useSession pour obtenir la session de l'utilisateur
 
-  // Toggle menu
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
+  const isAuthenticated = !!session; // Vérifie si la session existe (authentifié ou non)
+
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+
+  const handleLogout = () => {
+    console.log("User logged out"); // À remplacer par ta logique de déconnexion
+    router.push("/"); // Redirection après la déconnexion
   };
 
   return (
@@ -26,7 +29,7 @@ export default function Navbar() {
       <div className="container mx-auto flex justify-between items-center">
         {/* Logo */}
         <div className="flex items-center space-x-2">
-          <Link href="/">
+          <Link href="/" className="flex items-center space-x-2">
             <Image
               src="/logo.png"
               alt="Logo"
@@ -42,25 +45,53 @@ export default function Navbar() {
 
         <NavSearchBar />
 
-        {/* Authentication / Avatar */}
+        {/* Auth / Avatar zone */}
         <div className="flex items-center space-x-4">
-          <button
-             onClick={openLogin}
-            className="hidden md:block bg-blue-500 text-white px-4 py-2 rounded-md"
-          >
-            Login
-          </button>
-          <button
-             onClick={openSignup}
-            className="border cursor-pointer border-[#f9572a] hover:bg-gradient-to-r hover:from-[#f9572a] hover:to-[#ffc905] hidden md:block text-white px-4 py-2 rounded-md"
-          >
-            Signup
-          </button>
-          {/* Avatar if logged in */}
-          <div className="hidden md:block bg-gray-300 w-8 h-8 rounded-full"></div>
+          {!isAuthenticated ? (
+            <>
+              <button
+                onClick={openLogin}
+                className="hidden md:block bg-blue-500 text-white px-4 py-2 rounded-md"
+              >
+                Login
+              </button>
+              <button
+                onClick={openSignup}
+                className="border cursor-pointer border-[#f9572a] hover:bg-gradient-to-r hover:from-[#f9572a] hover:to-[#ffc905] hidden md:block text-white px-4 py-2 rounded-md"
+              >
+                Signup
+              </button>
+            </>
+          ) : (
+            <div className="relative group">
+              <div className="w-8 h-8 rounded-full cursor-pointer overflow-hidden">
+                <Image
+                  src={session.user?.avatar || "/images/avatars/dummy-avatar.png"} // Utilisation de l'avatar ou de l'avatar par défaut
+                  alt="Avatar"
+                  width={32}
+                  height={32}
+                  className="object-cover w-full h-full"
+                />
+              </div>
+              <div className="absolute right-0 mt-2 hidden group-hover:block bg-[#2c2c2c] border border-gray-600 rounded-md w-32 text-sm z-50">
+                <button
+                  className="block w-full text-left px-4 py-2 text-white hover:bg-gray-700"
+                  onClick={() => router.push("/profile/ton-username")}
+                >
+                  Profile
+                </button>
+                <button
+                  className="block w-full text-left px-4 py-2 text-white hover:bg-gray-700"
+                  onClick={handleLogout}
+                >
+                  Logout
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* Hamburger Menu for Mobile */}
+        {/* Hamburger Menu */}
         <div className="md:hidden">
           <button className="text-white" onClick={toggleMenu}>
             {isMenuOpen ? "✖" : "☰"}
@@ -70,34 +101,51 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="md:hidden bg-gray-700 p-4">
-          <button
-            onClick={openLogin}
-            className="hidden md:block bg-blue-500 text-white px-4 py-2 rounded-md"
-          >
-            Login
-          </button>
-          <button
-            onClick={openSignup}
-            className="border border-[#f9572a] hover:bg-gradient-to-r hover:from-[#f9572a] hover:to-[#ffc905] hidden md:block text-white px-4 py-2 rounded-md"
-          >
-            Signup
-          </button>
-          {/* Profile : visible mais redirige selon auth */}
-          <button
-            className="cursor-pointer block w-full text-left text-white py-2"
-            onClick={() =>
-              isAuthenticated
-                ? router.push("/profile/ton-username") // à adapter plus tard dynamiquement
-                : router.push("/login")
-            }
-          >
-            Profile
-          </button>
+        <div className="md:hidden bg-gray-700 p-4 space-y-2">
+          {!isAuthenticated ? (
+            <>
+              <div className="w-8 h-8 rounded-full overflow-hidden">
+                <Image
+                  src="/images/avatars/dummy-avatar.png" // Avatar par défaut quand non authentifié
+                  alt="avatar"
+                  width={32}
+                  height={32}
+                  className="object-cover w-full h-full"
+                />
+              </div>
+              <button
+                onClick={openLogin}
+                className="block bg-blue-500 text-white px-4 py-2 rounded-md"
+              >
+                Login
+              </button>
+              <button
+                onClick={openSignup}
+                className="border border-[#f9572a] hover:bg-gradient-to-r hover:from-[#f9572a] hover:to-[#ffc905] text-white px-4 py-2 rounded-md"
+              >
+                Signup
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                className="cursor-pointer block w-full text-left text-white py-2"
+                onClick={() => router.push("/profile/ton-username")}
+              >
+                Profile
+              </button>
+              <button
+                className="cursor-pointer block w-full text-left text-white py-2"
+                onClick={handleLogout}
+              >
+                Logout
+              </button>
+            </>
+          )}
         </div>
       )}
 
-      {/* Affichage des modales de connexion et d'inscription */}
+      {/* Modales */}
       <LoginForm />
       <RegisterForm />
     </nav>

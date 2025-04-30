@@ -12,7 +12,7 @@ const authHandler = NextAuth({
         email: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials) {
+      async authorize(credentials: { email: string; password: string } | undefined) {
         // Validation des informations de connexion
         if (!credentials?.email || !credentials?.password) {
           throw new Error("Email and password are required");
@@ -37,29 +37,31 @@ const authHandler = NextAuth({
           id: user.id,
           email: user.email,
           name: user.username,
+          avatar: user.avatar || "/images/avatars/dummy-avatar.png", // Utilise l'avatar ou un avatar par défaut
         };
       },
     }),
   ],
   session: {
-    strategy: "jwt",  // Utilisation du JWT pour la session
+    strategy: "jwt", // Utilisation du JWT pour la session
   },
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.id = user.id;  // Ajout de l'ID de l'utilisateur dans le token
+        token.id = user.id; // Ajout de l'ID de l'utilisateur dans le token
+        token.avatar = user.avatar || "/images/avatars/dummy-avatar.png"; // Ajout de l'avatar
       }
       return token;
     },
     async session({ session, token }) {
-        if (token && session.user) {
-          session.user.id = token.id as string;
-        }
-        return session;
-      },
+      if (token && session.user) {
+        session.user.id = token.id as string;
+        session.user.avatar = token.avatar as string; // Ajout de l'avatar à la session
+      }
+      return session;
+    },
   },
-  secret: process.env.NEXTAUTH_SECRET,  // Clé secrète pour signer le JWT
+  secret: process.env.NEXTAUTH_SECRET, // Clé secrète pour signer le JWT
 });
 
-// Exportation des handlers GET et POST pour Next.js
 export { authHandler as GET, authHandler as POST };
