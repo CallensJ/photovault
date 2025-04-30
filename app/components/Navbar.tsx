@@ -4,18 +4,22 @@ import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import NavSearchBar from "./NavSearchBar";
+import LoginForm from "@/app/components/modals/LoginForm";
+import RegisterForm from "@/app/components/modals/RegisterForm"; // Assure-toi que RegisterForm est dans ce dossier
+import { useModal } from "@/app/context/ModalContext";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const isAuthenticated = false; // ou true si tu veux tester
+  const { openLogin, openSignup } = useModal();
+
+  const isAuthenticated = false; // Remplace cela par une vérification d'authentification réelle
   const router = useRouter();
 
   // Toggle menu
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
-
 
   return (
     <nav className="bg-[#16171b] text-white p-4">
@@ -36,20 +40,23 @@ export default function Navbar() {
           </Link>
         </div>
 
-      <NavSearchBar />
-
-
+        <NavSearchBar />
 
         {/* Authentication / Avatar */}
         <div className="flex items-center space-x-4">
-          <button className="hidden md:block bg-blue-500 text-white px-4 py-2 rounded-md">
+          <button
+             onClick={openLogin}
+            className="hidden md:block bg-blue-500 text-white px-4 py-2 rounded-md"
+          >
             Login
           </button>
-          <button className="border cursor-pointer border-[#f9572a] hover:bg-gradient-to-r hover:from-[#f9572a] hover:to-[#ffc905]hidden md:block text-white px-4 py-2 rounded-md">
+          <button
+             onClick={openSignup}
+            className="border cursor-pointer border-[#f9572a] hover:bg-gradient-to-r hover:from-[#f9572a] hover:to-[#ffc905] hidden md:block text-white px-4 py-2 rounded-md"
+          >
             Signup
           </button>
           {/* Avatar if logged in */}
-          {/* Example */}
           <div className="hidden md:block bg-gray-300 w-8 h-8 rounded-full"></div>
         </div>
 
@@ -63,28 +70,36 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-  <div className="md:hidden bg-gray-700 p-4">
-    <button className="cursor-pointer block w-full text-left text-white py-2">
-      Login
-    </button>
-    <button className="cursor-pointer block w-full text-left text-white py-2">
-      Signup
-    </button>
+        <div className="md:hidden bg-gray-700 p-4">
+          <button
+            onClick={openLogin}
+            className="hidden md:block bg-blue-500 text-white px-4 py-2 rounded-md"
+          >
+            Login
+          </button>
+          <button
+            onClick={openSignup}
+            className="border border-[#f9572a] hover:bg-gradient-to-r hover:from-[#f9572a] hover:to-[#ffc905] hidden md:block text-white px-4 py-2 rounded-md"
+          >
+            Signup
+          </button>
+          {/* Profile : visible mais redirige selon auth */}
+          <button
+            className="cursor-pointer block w-full text-left text-white py-2"
+            onClick={() =>
+              isAuthenticated
+                ? router.push("/profile/ton-username") // à adapter plus tard dynamiquement
+                : router.push("/login")
+            }
+          >
+            Profile
+          </button>
+        </div>
+      )}
 
-    {/* Profile : visible mais redirige selon auth */}
-    <button
-      className="cursor-pointer block w-full text-left text-white py-2"
-      onClick={() =>
-        isAuthenticated
-          ? router.push("/profile/ton-username") // à adapter plus tard dynamiquement
-          : router.push("/login")
-      }
-    >
-      
-      Profile
-    </button>
-  </div>
-)}
+      {/* Affichage des modales de connexion et d'inscription */}
+      <LoginForm />
+      <RegisterForm />
     </nav>
   );
 }
