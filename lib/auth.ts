@@ -30,11 +30,13 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Incorrect password");
         }
 
+        // Assure-toi que le champ 'username' est dans l'objet retourné.
         return {
           id: user.id,
           email: user.email,
-          name: user.username,
+          name: user.username,  // Ici on mappe 'username' à 'name' comme attendu par 'next-auth'
           avatar: user.avatar || "/images/avatars/dummy-avatar.png",
+          username: user.username, // Ajoute le champ 'username'
         };
       },
     }),
@@ -47,6 +49,7 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.id = user.id;
         token.avatar = user.avatar || "/images/avatars/dummy-avatar.png";
+        token.username = user.username; // Assure-toi d'inclure 'username' dans le JWT
       }
       return token;
     },
@@ -54,6 +57,7 @@ export const authOptions: NextAuthOptions = {
       if (token && session.user) {
         session.user.id = token.id as string;
         session.user.avatar = token.avatar as string;
+        session.user.username = token.username as string; // Ajoute 'username' à la session
       }
       return session;
     },

@@ -1,13 +1,14 @@
 import "next-auth/jwt";
 
-// Étend les types de NextAuth pour ajouter l'id et l'avatar à la session
+// Étend les types de NextAuth pour ajouter l'id, l'avatar et le username à la session
 declare module "next-auth" {
   interface Session {
     user: {
       id: string;
       email: string;
       name: string;
-      avatar: string; // Ajoute l'avatar ici
+      avatar: string;
+      username: string; // Ajoute le username ici
     };
   }
 
@@ -15,7 +16,8 @@ declare module "next-auth" {
     id: string;
     email: string;
     name: string;
-    avatar: string; // Ajoute l'avatar ici
+    avatar: string;
+    username: string; // Ajoute le username ici
   }
 }
 
@@ -23,6 +25,7 @@ declare module "next-auth" {
 declare module "next-auth/jwt" {
   interface JWT {
     id: string;
-    avatar: string; // Ajoute l'avatar ici
+    avatar: string;
+    username: string; // Ajoute le username ici
   }
 }

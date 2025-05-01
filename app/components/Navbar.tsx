@@ -18,6 +18,7 @@ export default function Navbar() {
   const { data: session } = useSession();
 
   const isAuthenticated = !!session;
+  const username = session?.user?.username?.replace("@", "");
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
@@ -26,7 +27,6 @@ export default function Navbar() {
     router.push("/");
   };
 
-  // Fermer le menu dropdown quand on clique en dehors
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -97,7 +97,7 @@ export default function Navbar() {
                     className="block w-full text-left px-4 py-2 text-white hover:bg-gray-700"
                     onClick={() => {
                       setIsDropdownOpen(false);
-                      router.push("/profile/ton-username");
+                      if (username) router.push(`/profile/${username}`);
                     }}
                   >
                     Profile
@@ -156,7 +156,9 @@ export default function Navbar() {
             <>
               <button
                 className="cursor-pointer block w-full text-left text-white py-2"
-                onClick={() => router.push("/profile/ton-username")}
+                onClick={() => {
+                  if (username) router.push(`/profile/${username}`);
+                }}
               >
                 Profile
               </button>
