@@ -13,16 +13,15 @@ export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
-  const { openLogin, openSignup } = useModal();
+  const { openLogin, openSignup, openUploadImage } = useModal();
   const router = useRouter();
   const { data: session, status } = useSession();
   const [isSessionLoaded, setIsSessionLoaded] = useState(false);
 
   // Forcer le rafraîchissement de la session
-const refreshSession = async () => {
-  await fetch('/api/auth/session'); // Force un refresh de la session en appelant l'API
-};
-
+  const refreshSession = async () => {
+    await fetch('/api/auth/session'); // Force un refresh de la session en appelant l'API
+  };
 
   // Déboguer la session pour comprendre l'état de la session
   useEffect(() => {
@@ -33,7 +32,6 @@ const refreshSession = async () => {
       setIsSessionLoaded(true);
       refreshSession();
       console.log("User logged in:", session?.user);
-      
     }
   }, [status, session]);
 
@@ -126,11 +124,21 @@ const refreshSession = async () => {
                   >
                     Profile
                   </button>
+                  {/* Afficher "Upload Image" uniquement pour un utilisateur connecté */}
                   <button
                     className="block w-full text-left px-4 py-2 text-white hover:bg-gray-700"
                     onClick={() => {
                       setIsDropdownOpen(false);
-                      handleLogout();
+                      openUploadImage(); // Ouvre le formulaire d'upload
+                    }}
+                  >
+                    Upload Image
+                  </button>
+                  <button
+                    className="block w-full text-left px-4 py-2 text-white hover:bg-gray-700"
+                    onClick={() => {
+                      setIsDropdownOpen(false);
+                      handleLogout(); // Déconnexion
                     }}
                   >
                     Logout

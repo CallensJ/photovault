@@ -6,6 +6,7 @@ import { ModalProvider } from '@/app/context/ModalContext';
 import LoginForm from '@/app/components/modals/LoginForm';
 import RegisterForm from '@/app/components/modals/RegisterForm';
 import { SessionProvider } from 'next-auth/react'; // Ajout de l'import
+import UploadImageForm from './components/modals/UploadImageForm';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -17,6 +18,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Navbar />
             <LoginForm />
             <RegisterForm />
+            <UploadImageForm />
             {children}
           </ModalProvider>
         </SessionProvider>
