@@ -2,15 +2,30 @@
 "use client";
 
 export default function DeleteAccountButton() {
-  function handleDeleteClick() {
+  async function handleDeleteClick() {
     const confirmDelete = window.confirm(
       "Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible."
     );
-    if (confirmDelete) {
-      // TODO: envoyer une requête DELETE au backend
-      console.log("Compte supprimé (simulation)");
+  
+    if (!confirmDelete) return;
+  
+    try {
+      const res = await fetch("/api/delete-account", {
+        method: "DELETE",
+      });
+  
+      if (res.ok) {
+        // Déconnecter l'utilisateur après suppression
+        window.location.href = "/api/auth/signout";
+      } else {
+        alert("Erreur lors de la suppression du compte.");
+      }
+    } catch (error) {
+      console.error("Erreur :", error);
+      alert("Erreur réseau ou serveur.");
     }
   }
+  
 
   return (
     <div>
