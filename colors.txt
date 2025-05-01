@@ -8,5 +8,6 @@ bouton-signup hover: linear gradient #f9572a #ffc905;
 
 background user settings:#656667;
 
+secondary-background : #393a3a
 
 input #1c2027

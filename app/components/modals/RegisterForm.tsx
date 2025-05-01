@@ -39,7 +39,7 @@ export default function RegisterForm() {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white p-6 rounded-lg w-full sm:w-96 relative">
+      <div className="bg-[#393a3a] p-6 rounded-lg w-full sm:w-96 relative">
         <h2 className="text-xl font-semibold mb-4">Sign Up</h2>
 
         <form onSubmit={handleSubmit}>
@@ -51,7 +51,7 @@ export default function RegisterForm() {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required
-              className="mt-1 block w-full border rounded p-2"
+              className="mt-1 block bg-[#1c2027] w-full border rounded p-2"
             />
           </div>
 
@@ -63,7 +63,7 @@ export default function RegisterForm() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="mt-1 block w-full border rounded p-2"
+              className="mt-1 bg-[#1c2027] block w-full border rounded p-2"
             />
           </div>
 
@@ -75,7 +75,7 @@ export default function RegisterForm() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="mt-1 block w-full border rounded p-2"
+              className="mt-1 block bg-[#1c2027] w-full border rounded p-2"
             />
           </div>
 
