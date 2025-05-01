@@ -3,6 +3,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { prisma } from "@/lib/prisma";
 import { compare } from "bcryptjs";
 
+
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
@@ -49,8 +50,10 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.id = user.id;
         token.avatar = user.avatar || "/images/avatars/dummy-avatar.png";
-        token.username = user.username; // On inclut 'username' dans le token
-        token.name = user.name; // On inclut 'name' (username dans ce cas)
+        token.username = user.username;
+        token.name = user.name;
+        // Génère ou récupère ton accessToken ici
+        token.accessToken = "your-generated-access-token"; // Remplace par ton propre token généré
       }
       return token;
     },
@@ -59,7 +62,8 @@ export const authOptions: NextAuthOptions = {
         session.user.id = token.id as string;
         session.user.avatar = token.avatar as string;
         session.user.username = token.username as string;
-        session.user.name = token.name as string; // On met à jour le nom dans la session
+        session.user.name = token.name as string;
+        session.accessToken = token.accessToken as string; // Assigner l'accessToken à la session
       }
       return session;
     },
