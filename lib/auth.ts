@@ -30,13 +30,13 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Incorrect password");
         }
 
-        // Assure-toi que le champ 'username' est dans l'objet retourné.
+        // Retourner l'objet utilisateur avec les informations pertinentes
         return {
           id: user.id,
           email: user.email,
-          name: user.username,  // Ici on mappe 'username' à 'name' comme attendu par 'next-auth'
+          name: user.username,
           avatar: user.avatar || "/images/avatars/dummy-avatar.png",
-          username: user.username, // Ajoute le champ 'username'
+          username: user.username,
         };
       },
     }),
@@ -49,15 +49,17 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.id = user.id;
         token.avatar = user.avatar || "/images/avatars/dummy-avatar.png";
-        token.username = user.username; // Assure-toi d'inclure 'username' dans le JWT
+        token.username = user.username; // On inclut 'username' dans le token
+        token.name = user.name; // On inclut 'name' (username dans ce cas)
       }
       return token;
     },
     async session({ session, token }) {
-      if (token && session.user) {
+      if (token) {
         session.user.id = token.id as string;
         session.user.avatar = token.avatar as string;
-        session.user.username = token.username as string; // Ajoute 'username' à la session
+        session.user.username = token.username as string;
+        session.user.name = token.name as string; // On met à jour le nom dans la session
       }
       return session;
     },

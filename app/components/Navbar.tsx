@@ -15,7 +15,27 @@ export default function Navbar() {
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const { openLogin, openSignup } = useModal();
   const router = useRouter();
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
+  const [isSessionLoaded, setIsSessionLoaded] = useState(false);
+
+  // Forcer le rafraîchissement de la session
+const refreshSession = async () => {
+  await fetch('/api/auth/session'); // Force un refresh de la session en appelant l'API
+};
+
+
+  // Déboguer la session pour comprendre l'état de la session
+  useEffect(() => {
+    console.log("Session status: ", status);
+    console.log("Session data: ", session);
+
+    if (status === "authenticated" || status === "unauthenticated") {
+      setIsSessionLoaded(true);
+      refreshSession();
+      console.log("User logged in:", session?.user);
+      
+    }
+  }, [status, session]);
 
   const isAuthenticated = !!session;
   const username = session?.user?.username?.replace("@", "");
@@ -23,8 +43,8 @@ export default function Navbar() {
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
   const handleLogout = async () => {
-    // Déconnexion de NextAuth
-    await signOut({ callbackUrl: '/' }); // Redirection vers la page d'accueil après déconnexion
+    console.log("Logging out...");
+    await signOut({ callbackUrl: '/' }); // Redirection après déconnexion
   };
 
   useEffect(() => {
@@ -38,6 +58,10 @@ export default function Navbar() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  if (!isSessionLoaded) {
+    return <div>Loading...</div>; // Affiche un écran de chargement si la session n'est pas prête
+  }
 
   return (
     <nav className="bg-[#16171b] text-white p-4">
