@@ -7,7 +7,7 @@ import NavSearchBar from "./NavSearchBar";
 import LoginForm from "@/app/components/modals/LoginForm";
 import RegisterForm from "@/app/components/modals/RegisterForm";
 import { useModal } from "@/app/context/ModalContext";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -22,9 +22,9 @@ export default function Navbar() {
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
-  const handleLogout = () => {
-    console.log("User logged out"); // à remplacer par ta logique réelle
-    router.push("/");
+  const handleLogout = async () => {
+    // Déconnexion de NextAuth
+    await signOut({ callbackUrl: '/' }); // Redirection vers la page d'accueil après déconnexion
   };
 
   useEffect(() => {

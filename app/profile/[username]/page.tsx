@@ -88,7 +88,7 @@ export default function ProfilePage() {
         <div className="relative w-24 h-24 rounded-full overflow-hidden border-4 border-white -mt-16">
           <Image
             src={user.avatarUrl || "/images/avatars/dummy-avatar.png"}
-            alt={user.name}
+            alt={user.name || "Avatar de l'utilisateur"}
             fill
             className="object-cover"
           />
