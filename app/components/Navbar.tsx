@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import NavSearchBar from "./NavSearchBar";
 import LoginForm from "@/app/components/modals/LoginForm";
@@ -11,18 +11,33 @@ import { useSession } from "next-auth/react";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
   const { openLogin, openSignup } = useModal();
   const router = useRouter();
-  const { data: session } = useSession(); // On utilise useSession pour obtenir la session de l'utilisateur
+  const { data: session } = useSession();
 
-  const isAuthenticated = !!session; // Vérifie si la session existe (authentifié ou non)
+  const isAuthenticated = !!session;
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
   const handleLogout = () => {
-    console.log("User logged out"); // À remplacer par ta logique de déconnexion
-    router.push("/"); // Redirection après la déconnexion
+    console.log("User logged out"); // à remplacer par ta logique réelle
+    router.push("/");
   };
+
+  // Fermer le menu dropdown quand on clique en dehors
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
     <nav className="bg-[#16171b] text-white p-4">
@@ -46,7 +61,7 @@ export default function Navbar() {
         <NavSearchBar />
 
         {/* Auth / Avatar zone */}
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-4 relative">
           {!isAuthenticated ? (
             <>
               <button
@@ -63,30 +78,41 @@ export default function Navbar() {
               </button>
             </>
           ) : (
-            <div className="relative group">
-              <div className="w-8 h-8 rounded-full cursor-pointer overflow-hidden">
+            <div ref={dropdownRef} className="relative">
+              <div
+                className="w-8 h-8 rounded-full cursor-pointer overflow-hidden"
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+              >
                 <Image
-                  src={session.user?.avatar || "/images/avatars/dummy-avatar.png"} // Utilisation de l'avatar ou de l'avatar par défaut
+                  src={session.user?.avatar || "/images/avatars/dummy-avatar.png"}
                   alt="Avatar"
                   width={32}
                   height={32}
                   className="object-cover w-full h-full"
                 />
               </div>
-              <div className="absolute right-0 mt-2 hidden group-hover:block bg-[#2c2c2c] border border-gray-600 rounded-md w-32 text-sm z-50">
-                <button
-                  className="block w-full text-left px-4 py-2 text-white hover:bg-gray-700"
-                  onClick={() => router.push("/profile/ton-username")}
-                >
-                  Profile
-                </button>
-                <button
-                  className="block w-full text-left px-4 py-2 text-white hover:bg-gray-700"
-                  onClick={handleLogout}
-                >
-                  Logout
-                </button>
-              </div>
+              {isDropdownOpen && (
+                <div className="absolute right-0 mt-2 bg-[#2c2c2c] border border-gray-600 rounded-md w-32 text-sm z-50">
+                  <button
+                    className="block w-full text-left px-4 py-2 text-white hover:bg-gray-700"
+                    onClick={() => {
+                      setIsDropdownOpen(false);
+                      router.push("/profile/ton-username");
+                    }}
+                  >
+                    Profile
+                  </button>
+                  <button
+                    className="block w-full text-left px-4 py-2 text-white hover:bg-gray-700"
+                    onClick={() => {
+                      setIsDropdownOpen(false);
+                      handleLogout();
+                    }}
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -106,7 +132,7 @@ export default function Navbar() {
             <>
               <div className="w-8 h-8 rounded-full overflow-hidden">
                 <Image
-                  src="/images/avatars/dummy-avatar.png" // Avatar par défaut quand non authentifié
+                  src="/images/avatars/dummy-avatar.png"
                   alt="avatar"
                   width={32}
                   height={32}
