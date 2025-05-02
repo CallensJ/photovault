@@ -35,9 +35,10 @@ export default function Home() {
       }
     };
 
-    if (status === "authenticated") {
-      fetchPhotos(); // Récupérer les photos seulement si l'utilisateur est authentifié
-    }
+    // if (status === "authenticated") {
+    //   fetchPhotos(); // Récupérer les photos seulement si l'utilisateur est authentifié
+    // }
+    fetchPhotos();
   }, [status]); // Dépend de `status` pour relancer le `fetch` lorsque la session change
 
   return (
