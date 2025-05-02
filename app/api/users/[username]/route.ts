@@ -11,8 +11,22 @@ export async function GET(
   try {
     const user = await prisma.user.findUnique({
       where: { username },
-      include: {
-        photos: true, // assure-toi que cette relation existe dans ton schéma Prisma
+      select: {
+        username: true,
+        nickname: true, // Remplacer `name` par `nickname` ici
+        avatar: true,   // Si tu veux aussi l'avatar de l'utilisateur
+        description: true,      // Utiliser les champs définis dans ton modèle
+        city: true,
+        country: true,
+        photos: {
+          select: {
+            id: true,
+            url: true,
+            title: true,
+            description: true,
+            isPremium: true, // Inclure `isPremium`
+          },
+        },
       },
     });
 

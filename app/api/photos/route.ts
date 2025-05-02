@@ -73,6 +73,9 @@ export async function POST(req: NextRequest) {
 
 export async function GET() {
   const photos = await prisma.photography.findMany({
+    where: {
+      isPremium: false, // 💡 n'affiche que les non-premium
+    },
     include: {
       user: true,
       categories: true,
