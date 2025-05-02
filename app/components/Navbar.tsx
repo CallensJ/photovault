@@ -20,7 +20,7 @@ export default function Navbar() {
 
   // Forcer le rafraîchissement de la session
   const refreshSession = async () => {
-    await fetch('/api/auth/session'); // Force un refresh de la session en appelant l'API
+    await fetch("/api/auth/session"); // Force un refresh de la session en appelant l'API
   };
 
   // Déboguer la session pour comprendre l'état de la session
@@ -42,12 +42,15 @@ export default function Navbar() {
 
   const handleLogout = async () => {
     console.log("Logging out...");
-    await signOut({ callbackUrl: '/' }); // Redirection après déconnexion
+    await signOut({ callbackUrl: "/" }); // Redirection après déconnexion
   };
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsDropdownOpen(false);
       }
     }
@@ -106,7 +109,9 @@ export default function Navbar() {
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               >
                 <Image
-                  src={session.user?.avatar || "/images/avatars/dummy-avatar.png"}
+                  src={
+                    session.user?.avatar || "/images/avatars/dummy-avatar.png"
+                  }
                   alt="Avatar"
                   width={32}
                   height={32}
@@ -133,6 +138,16 @@ export default function Navbar() {
                     }}
                   >
                     Upload Image
+                  </button>
+                  {/* Nouveau bouton Settings */}
+                  <button
+                    className="block w-full text-left px-4 py-2 text-white hover:bg-gray-700"
+                    onClick={() => {
+                      setIsDropdownOpen(false);
+                      router.push("/user/settings"); // Redirection vers la page des paramètres
+                    }}
+                  >
+                    Settings
                   </button>
                   <button
                     className="block w-full text-left px-4 py-2 text-white hover:bg-gray-700"
