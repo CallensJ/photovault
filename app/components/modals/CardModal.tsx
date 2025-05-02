@@ -39,7 +39,12 @@ export default function CardModal({
 
   const handleDownload = () => {
     setDownloads(downloads + 1);
-    // Ajoute ici ta logique de téléchargement si besoin
+    const link = document.createElement("a");
+    link.href = fullImage;
+    link.download = fullImage.split("/").pop() || "image.jpg";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   const toggleDropdown = () => setDropdownVisible(!dropdownVisible);
