@@ -29,6 +29,7 @@ export default function Home() {
         }
         const data = await res.json();
         setPhotos(data); // Mise à jour des photos dans l'état
+        console.log("Photos récupérées depuis API :", data);
       } catch (error) {
         console.error("Erreur lors du chargement des photos:", error);
       }

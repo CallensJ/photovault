@@ -17,6 +17,7 @@ export default function UploadImageForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("Form submitted"); 
 
     // Vérification de la session pour l'utilisateur connecté
     if (status !== "authenticated") {
