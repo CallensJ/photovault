@@ -6,7 +6,7 @@ import CardModal from "./modals/CardModal";
 import Link from "next/link"; // Assure-toi d'importer le composant Link
 
 interface CardProps {
-  id: number;
+  id: string;
   imageUrl: string;
   fullImage: string;
   title: string;
@@ -38,11 +38,11 @@ export default function Card({
           className="relative h-60 rounded-lg overflow-hidden shadow-lg cursor-pointer group"
         >
           <Image
-             src={`/api/protected-image/${id}`}
+            src={`/api/protected-image/${id}`}
             alt={title}
             className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
             fill
-             sizes="(max-width: 768px) 100vw, 300px"
+            sizes="(max-width: 768px) 100vw, 300px"
           />
           <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white p-2 text-sm">
             {title}
@@ -60,7 +60,7 @@ export default function Card({
                   alt="Avatar"
                   fill
                   className="rounded-full object-cover"
-                   sizes="(max-width: 768px) 100vw, 300px"
+                  sizes="(max-width: 768px) 100vw, 300px"
                 />
               </div>
             </Link>
@@ -72,13 +72,12 @@ export default function Card({
 
       {showModal && (
         <CardModal
+          id={id} // Ajout de l'id ici
           fullImage={imageUrl}
           username={username}
           avatarUrl={avatarUrl}
           description={description}
           onClose={closeModal}
-          
-          
         />
       )}
     </>

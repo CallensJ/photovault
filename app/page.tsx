@@ -4,10 +4,10 @@ import { useState, useEffect } from "react";
 import Card from "./components/Card"; // Assure-toi d'importer le bon composant Card
 
 interface Photo {
-  id: number; // Change `number` en `string` car `id` est généralement une chaîne dans une base de données
+  id: string; // Utilise string si l'ID est une chaîne dans ta base de données
   title: string;
   url: string;
-  description?: string; // Description est maintenant optionnelle
+  description?: string;
   user: {
     avatar?: string;
     username: string;
@@ -35,10 +35,10 @@ export default function Home() {
       }
     };
 
-    // if (status === "authenticated") {
-    //   fetchPhotos(); // Récupérer les photos seulement si l'utilisateur est authentifié
-    // }
-    fetchPhotos();
+    // Si l'utilisateur est authentifié, on récupère les photos
+    if (status === "authenticated") {
+      fetchPhotos();
+    }
   }, [status]); // Dépend de `status` pour relancer le `fetch` lorsque la session change
 
   return (
@@ -49,14 +49,14 @@ export default function Home() {
         photos.map((card) => (
           <Card
             key={card.id}
-            id={card.id}
-            imageUrl={`/api/protected-image/${card.id}`}// Assure-toi que `url` existe dans les photos
+            id={card.id} // ID est maintenant une string
+            imageUrl={`/api/protected-image/${card.id}`} 
             title={card.title}
             description={card.description || ""} // Si description est undefined, utilise une chaîne vide
             avatarUrl={card.user?.avatar || "/images/avatars/dummy-avatar.png"} // Affiche l'avatar de l'utilisateur
             username={card.user?.username}
             views={card.views}
-            fullImage={card.fullImage}
+            fullImage={`/api/protected-image/${card.id}`}
           />
         ))
       )}

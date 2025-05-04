@@ -6,16 +6,21 @@ export async function GET(
   request: Request,
   { params }: { params: { username: string } }
 ) {
-  const { username } = params;
+  // Maintenant, nous attendons correctement la résolution de params
+  const { username } = await params; // Nous attendons explicitement les params
 
   try {
+    if (!username) {
+      return NextResponse.json({ error: "Nom d'utilisateur manquant" }, { status: 400 });
+    }
+
     const user = await prisma.user.findUnique({
       where: { username },
       select: {
         username: true,
-        nickname: true, // Remplacer `name` par `nickname` ici
-        avatar: true,   // Si tu veux aussi l'avatar de l'utilisateur
-        description: true,      // Utiliser les champs définis dans ton modèle
+        nickname: true, 
+        avatar: true,
+        description: true,      
         city: true,
         country: true,
         photos: {
@@ -24,7 +29,7 @@ export async function GET(
             url: true,
             title: true,
             description: true,
-            isPremium: true, // Inclure `isPremium`
+            isPremium: true,
           },
         },
       },

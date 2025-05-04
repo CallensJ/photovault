@@ -5,6 +5,7 @@ import { useState } from "react";
 import { FaHeart, FaDownload, FaEllipsisH } from "react-icons/fa";
 
 interface CardModalProps {
+  id: string; // Utilisation du type string ici pour l'ID
   fullImage: string;
   username: string;
   avatarUrl: string;
@@ -20,6 +21,7 @@ interface Comment {
 }
 
 export default function CardModal({
+  id,
   fullImage,
   username,
   avatarUrl,
@@ -31,9 +33,7 @@ export default function CardModal({
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState("");
-  const [openMenuCommentId, setOpenMenuCommentId] = useState<number | null>(
-    null
-  );
+  const [openMenuCommentId, setOpenMenuCommentId] = useState<number | null>(null);
 
   const handleLike = () => setLikes(likes + 1);
 
@@ -41,9 +41,7 @@ export default function CardModal({
     setDownloads(downloads + 1);
   
     try {
-      await fetch(`/api/photos/${photoId}/download`, {
-        method: "POST",
-      });
+      await fetch(`/api/photos/${id}/download`, { method: "POST" });
     } catch (error) {
       console.error("Erreur lors de l'enregistrement du téléchargement", error);
     }
@@ -76,8 +74,7 @@ export default function CardModal({
     }
   };
 
-  const handleDeleteComment = (id: number) =>
-    setComments((prev) => prev.filter((c) => c.id !== id));
+  const handleDeleteComment = (id: number) => setComments((prev) => prev.filter((c) => c.id !== id));
 
   const handleReportComment = () => {
     alert("Merci d’avoir signalé ce commentaire !");
@@ -106,7 +103,7 @@ export default function CardModal({
         {/* Image principale */}
         <div className="relative w-full h-[80vh] mb-6">
           <Image
-            src={fullImage}  // fullImage est l'URL utilisée ici
+            src={fullImage} // Utilisation de fullImage ici, c'est plus précis
             alt="Image"
             className="rounded-lg object-contain"
             fill
