@@ -1,8 +1,8 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import formidable from "formidable"; 
+import formidable from "formidable";
 import path from "path";
 import { getSession } from "next-auth/react";
-import { prisma } from "@/lib/prisma"; 
+import { prisma } from "@/lib/prisma";
 // Configuration de formidable
 export const config = {
   api: {
@@ -10,7 +10,10 @@ export const config = {
   },
 };
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   if (req.method === "POST") {
     // Vérification de la session (utilisateur authentifié)
     const session = await getSession({ req });
@@ -19,7 +22,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     // Récupérer le nom d'utilisateur à partir de la session ou de la requête
-    // const { username } = req.query; // username dans l'URL 
+    // const { username } = req.query; // username dans l'URL
     const username = session.user.username;
 
     if (!username) {
@@ -32,17 +35,47 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       keepExtensions: true, // Garder les extensions des fichiers
       maxFileSize: 10 * 1024 * 1024, // Taille maximale de fichier (10 Mo)
     });
-    
+
     // Utilisation de la méthode `parse` pour analyser la requête
-    form.parse(req, async (err: Error, fields, files) => { // Typage explicite des paramètres
+    form.parse(req, async (err: Error, fields, files) => {
+      // Typage explicite des paramètres
       if (err) {
-        return res.status(500).json({ message: "Erreur lors du téléchargement de l'avatar", error: err.message });
+        return res
+          .status(500)
+          .json({
+            message: "Erreur lors du téléchargement de l'avatar",
+            error: err.message,
+          });
       }
 
       // Vérifie que l'avatar est bien téléchargé
-      const avatarFile = files.avatar ? (files.avatar as formidable.File[])[0] : null; // Le fichier avatar
+      const avatarFile = files.avatar
+        ? (files.avatar as formidable.File[])[0]
+        : null; // Le fichier avatar
       if (!avatarFile) {
         return res.status(400).json({ message: "Aucun fichier téléchargé" });
+      }
+      // Vérification du type MIME du fichier téléchargé
+      const allowedImageTypes = ["image/jpeg", "image/png", "image/gif"];
+      if (
+        avatarFile.mimetype &&
+        !allowedImageTypes.includes(avatarFile.mimetype)
+      ) {
+        return res
+          .status(400)
+          .json({
+            message: "Le fichier téléchargé n'est pas une image valide",
+          });
+      }
+      // Vérification de l'extension de l'image
+      const fileExtension = path
+        .extname(avatarFile.originalFilename || "")
+        .toLowerCase();
+      const allowedExtensions = [".jpg", ".jpeg", ".png", ".gif"];
+      if (!allowedExtensions.includes(fileExtension)) {
+        return res
+          .status(400)
+          .json({ message: "L'extension du fichier n'est pas valide" });
       }
 
       // Chemin du fichier téléchargé
@@ -63,10 +96,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           data: { avatar: avatarPath },
         });
 
-        return res.status(200).json({ message: "Avatar téléchargé et mis à jour avec succès", avatarPath });
+        return res
+          .status(200)
+          .json({
+            message: "Avatar téléchargé et mis à jour avec succès",
+            avatarPath,
+          });
       } catch (error) {
         console.error(error);
-        return res.status(500).json({ message: "Erreur lors de la mise à jour de l'utilisateur" });
+        return res
+          .status(500)
+          .json({ message: "Erreur lors de la mise à jour de l'utilisateur" });
       }
     });
   } else {

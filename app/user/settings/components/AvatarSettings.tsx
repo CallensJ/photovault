@@ -3,12 +3,14 @@
 import { useRef, useState } from "react";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export default function AvatarSettings() {
+  const { data: session } = useSession();
   const [pickedImage, setPickedImage] = useState<string | null>(null);
   const [pickedFile, setPickedFile] = useState<File | null>(null);
-  const { data: session, update } = useSession();  // Hook de session
   const imageInputRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
 
   const handlePickClick = () => {
     imageInputRef.current?.click();
@@ -16,75 +18,64 @@ export default function AvatarSettings() {
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (!file) {
-      setPickedImage(null);
-      setPickedFile(null);
-      return;
-    }
+    if (!file) return;
 
     setPickedFile(file);
-
-    //https://developer.mozilla.org/en-US/docs/Web/API/FileReader
 
     const reader = new FileReader();
     reader.onload = () => {
       setPickedImage(reader.result as string);
     };
-    reader.readAsDataURL(file); //lis en base64
+    reader.readAsDataURL(file);
   };
 
   const handleSaveAvatar = async () => {
-    if (!pickedFile) {
-      alert("Aucune image sélectionnée");
-      return;
-    }
+    if (!pickedFile || !session?.user?.username) return;
 
     const formData = new FormData();
     formData.append("avatar", pickedFile);
 
-    try {
-      // Vérifie si la session est disponible
-      if (!session) {
-        alert("Utilisateur non authentifié !");
-        return;
-      }
+    const res = await fetch(`/api/users/${session.user.username}`, {
+      method: "POST",
+      body: formData,
+    });
 
-      // Envoi de l'avatar à l'API pour mise à jour
-      const response = await fetch(`/api/users/${session.user.username}/upload-avatar`, {
-        method: "POST",
-        body: formData,
-      });
-
-      if (response.ok) {
-        // Si l'upload est réussi, mettre à jour la session avec le nouvel avatar
-        const updatedSession = await response.json();
-        if (updatedSession?.avatar) {
-          // Mettre à jour la session avec l'avatar mis à jour
-          update({
-            user: {
-              ...session.user,
-              avatar: updatedSession.avatar,  // Mettre à jour l'avatar
-            },
-          });
-          alert("Avatar mis à jour !");
-        }
-      } else {
-        alert("Échec de la mise à jour de l'avatar");
-      }
-    } catch (error) {
-      console.error("Erreur lors de la mise à jour de l'avatar :", error);
-      alert("Erreur lors de la mise à jour de l'avatar");
+    const result = await res.json();
+    if (!res.ok) {
+      alert(`Erreur : ${result.error || "Échec de l'envoi"}`);
+      return;
     }
+
+    alert("Avatar mis à jour !");
+    await fetch("/api/auth/session");  // Actualise la session après l'upload
+    router.refresh();
+
+
+
   };
 
   return (
     <div className="space-y-4">
-      <label className="block text-lg font-semibold">Changer votre avatar</label>
+      <label className="block text-lg font-semibold">
+        Changer votre avatar
+      </label>
 
       <div className="flex items-center gap-6">
         <div className="relative w-24 h-24 rounded-full overflow-hidden bg-gray-100 border">
           {pickedImage ? (
-            <Image src={pickedImage} alt="Aperçu" fill className="object-cover" />
+            <Image
+              src={pickedImage}
+              alt="Aperçu"
+              fill
+              className="object-cover"
+            />
+          ) : session?.user.avatar ? (
+            <Image
+              src={session.user.avatar}
+              alt="Avatar actuel"
+              fill
+              className="object-cover"
+            />
           ) : (
             <p className="text-sm text-gray-500 flex items-center justify-center w-full h-full text-center">
               Aucune image
@@ -100,6 +91,7 @@ export default function AvatarSettings() {
             ref={imageInputRef}
             onChange={handleImageChange}
           />
+
           <button
             onClick={handlePickClick}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg"

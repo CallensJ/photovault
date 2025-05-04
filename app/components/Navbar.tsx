@@ -109,9 +109,7 @@ export default function Navbar() {
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               >
                 <Image
-                  src={
-                    session.user?.avatar || "/images/avatars/dummy-avatar.png"
-                  }
+                 src={session.user?.avatar ? `${session.user.avatar}?t=${Date.now()}` : "/images/avatars/dummy-avatar.png"}
                   alt="Avatar"
                   width={32}
                   height={32}
