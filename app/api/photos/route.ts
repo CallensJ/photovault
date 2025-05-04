@@ -4,7 +4,7 @@ import { writeFile, mkdir } from "fs/promises";
 import { join } from "path";
 import { getToken } from "next-auth/jwt";
 
-
+// POST pour uploader une image
 export async function POST(req: NextRequest) {
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
 
@@ -24,14 +24,19 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Titre ou image manquant" }, { status: 400 });
   }
 
+  // Créer le buffer de l'image
   const buffer = Buffer.from(await image.arrayBuffer());
   const filename = `${Date.now()}-${image.name}`;
-  const folderPath = join(process.cwd(), "public/images/user-uploads");
+
+  // Dossier où les images seront enregistrées
+  const folderPath = join(process.cwd(), "app/uploads/images/user-uploads");
   const filePath = join(folderPath, filename);
 
+  // Créer le dossier si nécessaire
   await mkdir(folderPath, { recursive: true });
   await writeFile(filePath, buffer);
 
+  // Traiter les catégories
   const categoryNames = categoriesRaw
     .split(",")
     .map((c) => c.trim())
@@ -47,6 +52,7 @@ export async function POST(req: NextRequest) {
     )
   );
 
+  // Trouver l'utilisateur
   const user = await prisma.user.findUnique({
     where: { email: token.email },
   });
@@ -55,10 +61,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Utilisateur introuvable" }, { status: 404 });
   }
 
+  // Créer la photo dans la base de données
   const photo = await prisma.photography.create({
     data: {
       title,
       description,
+     
       url: `/images/user-uploads/${filename}`,
       userId: user.id,
       isPremium,
@@ -71,6 +79,7 @@ export async function POST(req: NextRequest) {
   return NextResponse.json(photo, { status: 201 });
 }
 
+// GET pour récupérer les photos
 export async function GET() {
   const photos = await prisma.photography.findMany({
     where: {

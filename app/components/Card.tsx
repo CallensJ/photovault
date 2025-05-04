@@ -17,6 +17,7 @@ interface CardProps {
 }
 
 export default function Card({
+  id,
   imageUrl,
   username,
   avatarUrl,
@@ -37,7 +38,7 @@ export default function Card({
           className="relative h-60 rounded-lg overflow-hidden shadow-lg cursor-pointer group"
         >
           <Image
-            src={imageUrl}
+             src={`/api/protected-image/${id}`}
             alt={title}
             className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
             fill

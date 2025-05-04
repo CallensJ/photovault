@@ -50,7 +50,7 @@ export default function Home() {
           <Card
             key={card.id}
             id={card.id}
-            imageUrl={card.url} // Assure-toi que `url` existe dans les photos
+            imageUrl={`/api/protected-image/${card.id}`}// Assure-toi que `url` existe dans les photos
             title={card.title}
             description={card.description || ""} // Si description est undefined, utilise une chaîne vide
             avatarUrl={card.user?.avatar || "/images/avatars/dummy-avatar.png"} // Affiche l'avatar de l'utilisateur

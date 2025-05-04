@@ -1,6 +1,6 @@
 import "next-auth/jwt";
 
-// Étend les types de NextAuth pour ajouter l'id, l'avatar, le username et l'accessToken à la session
+// Étend les types de NextAuth pour ajouter l'id, l'avatar, le username, isPremium et l'accessToken à la session
 declare module "next-auth" {
   interface Session {
     accessToken?: string; // Ajoute accessToken ici
@@ -11,6 +11,7 @@ declare module "next-auth" {
       name: string;
       avatar: string;
       username: string; // Ajoute le username ici
+      isPremium: boolean;  // Ajoute la propriété isPremium ici
     };
   }
 
@@ -20,6 +21,7 @@ declare module "next-auth" {
     name: string;
     avatar: string;
     username: string; // Ajoute le username ici
+    isPremium: boolean;  // Ajoute la propriété isPremium ici
   }
 }
 
@@ -30,5 +32,6 @@ declare module "next-auth/jwt" {
     avatar: string;
     username: string; // Ajoute le username ici
     accessToken?: string; // Ajoute accessToken ici
+    isPremium: boolean;  // Ajoute la propriété isPremium ici
   }
 }

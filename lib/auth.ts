@@ -3,7 +3,6 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { prisma } from "@/lib/prisma";
 import { compare } from "bcryptjs";
 
-
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
@@ -19,6 +18,14 @@ export const authOptions: NextAuthOptions = {
 
         const user = await prisma.user.findUnique({
           where: { email: credentials.email },
+          select: { // Récupère `isPremium` et autres données nécessaires
+            id: true,
+            email: true,
+            username: true,
+            avatar: true,
+            isPremium: true, // Assure-toi de récupérer `isPremium`
+            password: true,
+          },
         });
 
         if (!user || !user.password) {
@@ -38,6 +45,7 @@ export const authOptions: NextAuthOptions = {
           name: user.username,
           avatar: user.avatar || "/images/avatars/dummy-avatar.png",
           username: user.username,
+          isPremium: user.isPremium, // Ajoute `isPremium` ici
         };
       },
     }),
@@ -52,8 +60,8 @@ export const authOptions: NextAuthOptions = {
         token.avatar = user.avatar || "/images/avatars/dummy-avatar.png";
         token.username = user.username;
         token.name = user.name;
-        // Génère ou récupère ton accessToken ici
-        token.accessToken = "your-generated-access-token"; // Remplace par ton propre token généré
+        token.isPremium = user.isPremium; // Ajoute `isPremium` au token
+        token.accessToken = "your-generated-access-token"; // Génère ou récupère ton accessToken ici
       }
       return token;
     },
@@ -63,6 +71,7 @@ export const authOptions: NextAuthOptions = {
         session.user.avatar = token.avatar as string;
         session.user.username = token.username as string;
         session.user.name = token.name as string;
+        session.user.isPremium = token.isPremium as boolean; // Ajoute `isPremium` à la session
         session.accessToken = token.accessToken as string; // Assigner l'accessToken à la session
       }
       return session;

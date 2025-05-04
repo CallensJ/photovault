@@ -2,6 +2,7 @@
 
 import { useParams } from "next/navigation";
 import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react"; // Import de useSession
 import Image from "next/image";
 import CardModal from "@/app/components/modals/CardModal";
 import UserProfileFormMsg from "@/app/components/modals/UserProfileFormMsg";
@@ -18,6 +19,7 @@ type Photo = {
   url: string;
   title: string;
   description: string;
+  isPremium: boolean; // Ajout du type isPremium
 };
 
 type User = {
@@ -32,6 +34,7 @@ type User = {
 
 export default function ProfilePage() {
   const { username } = useParams();
+  const { data: session } = useSession(); // Récupération de la session
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [isFollowed, setIsFollowed] = useState(false);
@@ -56,20 +59,30 @@ export default function ProfilePage() {
 
     if (username) fetchUser();
   }, [username]);
-
   const openModal = (photo: Photo) => {
-    if (user) {
-      setSelectedImage({
-        url: photo.url,
-        title: photo.title,
-        description: photo.description,
-        username: user.username,
-        avatarUrl: user.avatarUrl,
-      });
-      setShowModal(true);
+    if (!user) return;  // Si 'user' est null, on arrête la fonction
+  
+    // Vérifie si l'utilisateur est autorisé à voir la photo (si c'est une photo premium)
+    const isOwner = session?.user.username === user.username; // Vérifie si l'utilisateur est le propriétaire
+    const isPremium = photo.isPremium && !isOwner; // Si la photo est premium et que l'utilisateur n'est pas propriétaire
+    
+    // Si la photo est premium mais que l'utilisateur n'est pas connecté ou n'a pas l'abonnement premium, on ne permet pas l'ouverture
+    if (isPremium && (!session?.user || !session?.user.isPremium)) {
+      alert("Accès refusé, photo premium réservée aux utilisateurs premium");
+      return; // Empêche l'ouverture de la modale
     }
+  
+    // Si l'utilisateur est autorisé (soit photo non-premium, soit il est connecté et premium)
+    setSelectedImage({
+      url: photo.url,
+      title: photo.title,
+      description: photo.description,
+      username: user.username,
+      avatarUrl: user.avatarUrl,
+    });
+    setShowModal(true);
   };
-
+  
   const closeModal = () => {
     setShowModal(false);
     setSelectedImage(null);
@@ -127,20 +140,31 @@ export default function ProfilePage() {
           <>
             <h2 className="text-xl font-bold mb-4">Galerie</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-              {user.photos.map((photo: Photo) => (
-                <div
-                  key={photo.id}
-                  onClick={() => openModal(photo)}
-                  className="relative w-full h-64 rounded-xl overflow-hidden shadow-md"
-                >
-                  <Image
-                    src={photo.url}
-                    alt={photo.title}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-              ))}
+              {user.photos.map((photo: Photo) => {
+                // On vérifie si l'image est premium et si l'utilisateur connecté est différent du propriétaire
+                const isOwner = session?.user.username === user.username;
+                const isPremium = photo.isPremium && !isOwner;
+
+                return (
+                  <div
+                    key={photo.id}
+                    onClick={() => openModal(photo)}
+                    className="relative w-full h-64 rounded-xl overflow-hidden shadow-md"
+                  >
+                    <Image
+                      src={photo.url}
+                      alt={photo.title}
+                      fill
+                      className={`object-cover ${isPremium ? "filter blur-sm" : ""}`} // Floutage si photo premium
+                    />
+                    {isPremium && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white text-lg">
+                        Veuillez souscrire pour voir cette image
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </>
         )}

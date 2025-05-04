@@ -49,12 +49,13 @@ export default function CardModal({
     }
   
     const link = document.createElement("a");
-    link.href = fullImage;
+    link.href = fullImage; // fullImage est utilisé ici
     link.download = fullImage.split("/").pop() || "image.jpg";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
+
   const toggleDropdown = () => setDropdownVisible(!dropdownVisible);
 
   const handleOptionSelect = (option: string) => {
@@ -105,7 +106,7 @@ export default function CardModal({
         {/* Image principale */}
         <div className="relative w-full h-[80vh] mb-6">
           <Image
-            src={fullImage}
+            src={fullImage}  // fullImage est l'URL utilisée ici
             alt="Image"
             className="rounded-lg object-contain"
             fill
