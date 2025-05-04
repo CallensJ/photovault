@@ -38,7 +38,10 @@ model Photography {
   
   categories  Category[] @relation("PhotoCategories")
   comments    Comment[]
-    isPremium   Boolean    @default(false)  
+  isPremium   Boolean    @default(false)  
+  downloads   Int        @default(0)
+  likes       Int        @default(0)
+  views       Int        @default(0)
 }
 
 model Comment {

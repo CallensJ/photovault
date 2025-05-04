@@ -37,8 +37,17 @@ export default function CardModal({
 
   const handleLike = () => setLikes(likes + 1);
 
-  const handleDownload = () => {
+  const handleDownload = async () => {
     setDownloads(downloads + 1);
+  
+    try {
+      await fetch(`/api/photos/${photoId}/download`, {
+        method: "POST",
+      });
+    } catch (error) {
+      console.error("Erreur lors de l'enregistrement du téléchargement", error);
+    }
+  
     const link = document.createElement("a");
     link.href = fullImage;
     link.download = fullImage.split("/").pop() || "image.jpg";
@@ -46,7 +55,6 @@ export default function CardModal({
     link.click();
     document.body.removeChild(link);
   };
-
   const toggleDropdown = () => setDropdownVisible(!dropdownVisible);
 
   const handleOptionSelect = (option: string) => {

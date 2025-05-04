@@ -76,6 +76,8 @@ export default function Card({
           avatarUrl={avatarUrl}
           description={description}
           onClose={closeModal}
+          
+          
         />
       )}
     </>
