@@ -1,7 +1,6 @@
 // app/api/users/[username]/route.ts
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma"; // adapte ce chemin selon ton projet
-
+import { prisma } from "@/lib/prisma"; 
 export async function GET(
   request: Request,
   { params }: { params: { username: string } }

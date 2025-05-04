@@ -103,7 +103,7 @@ export default function CardModal({
         {/* Image principale */}
         <div className="relative w-full h-[80vh] mb-6">
           <Image
-            src={fullImage} // Utilisation de fullImage ici, c'est plus précis
+             src={`/api/protected-image/${id}`}  // Utilise l'ID ici pour appeler l'API
             alt="Image"
             className="rounded-lg object-contain"
             fill
@@ -115,7 +115,8 @@ export default function CardModal({
         <div className="flex items-center gap-4 mb-4">
           <div className="relative w-12 h-12">
             <Image
-              src={avatarUrl}
+             
+             src={avatarUrl || "/images/avatars/dummy-avatar.png"}
               alt="Avatar"
               className="rounded-full object-cover"
               fill

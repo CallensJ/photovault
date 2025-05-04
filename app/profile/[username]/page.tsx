@@ -8,6 +8,7 @@ import CardModal from "@/app/components/modals/CardModal";
 import UserProfileFormMsg from "@/app/components/modals/UserProfileFormMsg";
 
 type SelectedImage = {
+  id: string;
   url: string;
   title: string;
   description: string;
@@ -60,8 +61,12 @@ export default function ProfilePage() {
     if (username) fetchUser();
   }, [username]);
   const openModal = (photo: Photo) => {
+    if (!photo.url) {
+      console.error('URL de la photo manquante');
+      return;
+    }
     if (!user) return;  // Si 'user' est null, on arrête la fonction
-  
+    console.log("Photo URL:", photo.url);
     // Vérifie si l'utilisateur est autorisé à voir la photo (si c'est une photo premium)
     const isOwner = session?.user.username === user.username; // Vérifie si l'utilisateur est le propriétaire
     const isPremium = photo.isPremium && !isOwner; // Si la photo est premium et que l'utilisateur n'est pas propriétaire
@@ -74,6 +79,7 @@ export default function ProfilePage() {
   
     // Si l'utilisateur est autorisé (soit photo non-premium, soit il est connecté et premium)
     setSelectedImage({
+      id: photo.id,
       url: photo.url,
       title: photo.title,
       description: photo.description,
@@ -152,7 +158,9 @@ export default function ProfilePage() {
                     className="relative w-full h-64 rounded-xl overflow-hidden shadow-md"
                   >
                     <Image
-                      src={photo.url}
+                         // Utilise l'ID ici pour appeler l'API
+                      // src={photo.url}
+                      src={`/api/protected-image/${photo.id}`}
                       alt={photo.title}
                       fill
                       className={`object-cover ${isPremium ? "filter blur-sm" : ""}`} // Floutage si photo premium
@@ -172,6 +180,7 @@ export default function ProfilePage() {
 
       {showModal && selectedImage && (
         <CardModal
+          id={selectedImage?.id}
           fullImage={selectedImage.url}
           username={selectedImage.username}
           avatarUrl={selectedImage.avatarUrl}

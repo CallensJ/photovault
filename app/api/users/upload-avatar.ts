@@ -1,9 +1,8 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import formidable from "formidable"; // Importation correcte
+import formidable from "formidable"; 
 import path from "path";
 import { getSession } from "next-auth/react";
-import { prisma } from "@/lib/prisma"; // Assure-toi que le chemin vers prisma est correct
-
+import { prisma } from "@/lib/prisma"; 
 // Configuration de formidable
 export const config = {
   api: {
@@ -20,7 +19,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     // Récupérer le nom d'utilisateur à partir de la session ou de la requête
-    const { username } = req.query; // username dans l'URL (par exemple : /api/users/upload-avatar/[username])
+    // const { username } = req.query; // username dans l'URL 
+    const username = session.user.username;
 
     if (!username) {
       return res.status(400).json({ message: "Nom d'utilisateur manquant" });
