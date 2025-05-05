@@ -95,7 +95,7 @@ export default async function handler(
           where: { username: String(username) },
           data: { avatar: avatarPath },
         });
-
+        
         return res
           .status(200)
           .json({

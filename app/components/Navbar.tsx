@@ -18,10 +18,6 @@ export default function Navbar() {
   const { data: session, status } = useSession();
   const [isSessionLoaded, setIsSessionLoaded] = useState(false);
 
-  // Forcer le rafraîchissement de la session
-  const refreshSession = async () => {
-    await fetch("/api/auth/session"); // Force un refresh de la session en appelant l'API
-  };
 
   // Déboguer la session pour comprendre l'état de la session
   useEffect(() => {
@@ -30,7 +26,7 @@ export default function Navbar() {
 
     if (status === "authenticated" || status === "unauthenticated") {
       setIsSessionLoaded(true);
-      refreshSession();
+   
       console.log("User logged in:", session?.user);
     }
   }, [status, session]);
@@ -63,6 +59,9 @@ export default function Navbar() {
   if (!isSessionLoaded) {
     return <div>Loading...</div>; // Affiche un écran de chargement si la session n'est pas prête
   }
+  const avatarSrc = session?.user?.avatar
+    ? `${session.user.avatar}`
+    : "/images/avatars/dummy-avatar.png";
 
   return (
     <nav className="bg-[#16171b] text-white p-4">
@@ -109,7 +108,7 @@ export default function Navbar() {
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               >
                 <Image
-                 src={session.user?.avatar ? `${session.user.avatar}?t=${Date.now()}` : "/images/avatars/dummy-avatar.png"}
+                  src={avatarSrc}
                   alt="Avatar"
                   width={32}
                   height={32}
@@ -177,7 +176,7 @@ export default function Navbar() {
             <>
               <div className="w-8 h-8 rounded-full overflow-hidden">
                 <Image
-                  src="/images/avatars/dummy-avatar.png"
+                  src={avatarSrc}
                   alt="avatar"
                   width={32}
                   height={32}

@@ -3,14 +3,14 @@
 import { useRef, useState } from "react";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 
 export default function AvatarSettings() {
   const { data: session } = useSession();
   const [pickedImage, setPickedImage] = useState<string | null>(null);
   const [pickedFile, setPickedFile] = useState<File | null>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
-  const router = useRouter();
+  // const router = useRouter();
 
   const handlePickClick = () => {
     imageInputRef.current?.click();
@@ -31,27 +31,42 @@ export default function AvatarSettings() {
 
   const handleSaveAvatar = async () => {
     if (!pickedFile || !session?.user?.username) return;
-
+  
     const formData = new FormData();
     formData.append("avatar", pickedFile);
-
-    const res = await fetch(`/api/users/${session.user.username}`, {
-      method: "POST",
-      body: formData,
-    });
-
-    const result = await res.json();
-    if (!res.ok) {
-      alert(`Erreur : ${result.error || "Échec de l'envoi"}`);
-      return;
+  
+    try {
+      const res = await fetch(`/api/users/${session.user.username}`, {
+        method: "POST",
+        body: formData,
+      });
+  
+      // Vérification de la réponse
+      if (!res.ok) {
+        const result = await res.json();
+        alert(`Erreur : ${result.error || "Échec de l'envoi"}`);
+        return;
+      }
+  
+      const data = await res.json();
+  
+      if (data.avatarPath) {
+        // Si l'upload est réussi, tu peux mettre à jour l'avatar dans l'interface utilisateur
+        alert("Avatar mis à jour");
+  
+        // Option 1 : Recharger la page pour appliquer les changements (solution simple mais pas optimale)
+        window.location.reload();
+  
+        // Option 2 : Si tu veux éviter de recharger la page, tu peux juste mettre à jour la session.
+        // Cela dépend de la manière dont tu gères la session utilisateur. Si tu veux éviter le reload de page,
+        // tu pourrais soit appeler une API pour mettre à jour la session, soit forcer le rafraîchissement de la session.
+      } else {
+        alert("Erreur lors de l'upload de l'avatar");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Une erreur est survenue lors de l'upload de l'avatar");
     }
-
-    alert("Avatar mis à jour !");
-    await fetch("/api/auth/session");  // Actualise la session après l'upload
-    router.refresh();
-
-
-
   };
 
   return (

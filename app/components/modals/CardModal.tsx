@@ -11,6 +11,7 @@ interface CardModalProps {
   avatarUrl: string;
   description: string;
   onClose: () => void;
+  onDelete: (id: string) => void;
 }
 
 interface Comment {
@@ -27,25 +28,54 @@ export default function CardModal({
   avatarUrl,
   description,
   onClose,
+  onDelete
 }: CardModalProps) {
   const [likes, setLikes] = useState(0);
   const [downloads, setDownloads] = useState(0);
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState("");
-  const [openMenuCommentId, setOpenMenuCommentId] = useState<number | null>(null);
+  const [openMenuCommentId, setOpenMenuCommentId] = useState<number | null>(
+    null
+  );
+
+  //suppression
+  const handleDeleteImage = async (id: string) => {
+    const confirmed = confirm("Supprimer cette image ?");
+    if (!confirmed) return;
+  
+    try {
+      const res = await fetch(`/api/protected-image/${id}`, {
+        method: "DELETE",
+      });
+  
+      if (res.ok) {
+        alert("Image supprimée");
+        onClose(); // ← Ferme la modale
+       
+        onDelete(id); // ← ici
+      } else {
+        const data = await res.json();
+        alert("Erreur : " + data.error);
+      }
+    } catch (err) {
+      alert("Erreur réseau");
+    }
+  };
 
   const handleLike = () => setLikes(likes + 1);
 
+
+
   const handleDownload = async () => {
     setDownloads(downloads + 1);
-  
+
     try {
       await fetch(`/api/photos/${id}/download`, { method: "POST" });
     } catch (error) {
       console.error("Erreur lors de l'enregistrement du téléchargement", error);
     }
-  
+
     const link = document.createElement("a");
     link.href = fullImage; // fullImage est utilisé ici
     link.download = fullImage.split("/").pop() || "image.jpg";
@@ -74,7 +104,8 @@ export default function CardModal({
     }
   };
 
-  const handleDeleteComment = (id: number) => setComments((prev) => prev.filter((c) => c.id !== id));
+  const handleDeleteComment = (id: number) =>
+    setComments((prev) => prev.filter((c) => c.id !== id));
 
   const handleReportComment = () => {
     alert("Merci d’avoir signalé ce commentaire !");
@@ -103,7 +134,7 @@ export default function CardModal({
         {/* Image principale */}
         <div className="relative w-full h-[80vh] mb-6">
           <Image
-             src={`/api/protected-image/${id}`}  // Utilise l'ID ici pour appeler l'API
+            src={`/api/protected-image/${id}`} // Utilise l'ID ici pour appeler l'API
             alt="Image"
             className="rounded-lg object-contain"
             fill
@@ -115,8 +146,7 @@ export default function CardModal({
         <div className="flex items-center gap-4 mb-4">
           <div className="relative w-12 h-12">
             <Image
-             
-             src={avatarUrl || "/images/avatars/dummy-avatar.png"}
+              src={avatarUrl || "/images/avatars/dummy-avatar.png"}
               alt="Avatar"
               className="rounded-full object-cover"
               fill
@@ -178,6 +208,12 @@ export default function CardModal({
                 className="p-2 cursor-pointer hover:bg-gray-200"
               >
                 ⭐ Ajouter aux favoris
+              </li>
+              <li
+                 onClick={() => handleDeleteImage(id)}
+                className="p-2 cursor-pointer hover:bg-gray-200"
+              >
+                supprimer
               </li>
             </ul>
           )}

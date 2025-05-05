@@ -1,3 +1,6 @@
+
+
+
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import formidable, { File } from "formidable";
@@ -46,10 +49,9 @@ function webRequestToNodeRequest(req: Request): IncomingMessage {
 // GET — infos utilisateur
 export async function GET(
   req: Request,
-  { params }: { params: { username: string } }
+  context: { params: { username: string } }
 ) {
-  const { username } = params;
-
+  const { username } = context.params;
   if (!username) {
     return NextResponse.json({ error: "Nom d'utilisateur manquant" }, { status: 400 });
   }
@@ -92,16 +94,18 @@ export async function POST(
   req: Request,
   context: { params: { username: string } }
 ) {
-  const { params } = context;
-  const username = params?.username;  // On accède ici à `params.username`
+  // const { params } = context;
+  const { username } = context.params;
+  // const username = params?.username;  // On accède ici à `params.username`
   
   if (!username) {
     return NextResponse.json({ error: "Nom d'utilisateur manquant" }, { status: 400 });
   }
 
   const uploadDir = path.join(process.cwd(), "public", "images", "avatars");
+  
   fs.mkdirSync(uploadDir, { recursive: true });
-
+    //upload de fichier
   const form = formidable({
     uploadDir,
     keepExtensions: true,

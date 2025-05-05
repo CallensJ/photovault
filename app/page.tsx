@@ -20,6 +20,11 @@ export default function Home() {
   const { status } = useSession(); // On garde uniquement le status
   const [photos, setPhotos] = useState<Photo[]>([]); // Utilisation du type `Photo` pour les photos
 
+  const handleDeletePhoto = (id: string) => {
+    setPhotos((prev) => prev.filter((photo) => photo.id !== id));
+  };
+
+
   useEffect(() => {
     const fetchPhotos = async () => {
       try {
@@ -57,6 +62,7 @@ export default function Home() {
             username={card.user?.username}
             views={card.views}
             fullImage={`/api/protected-image/${card.id}`}
+            onDelete={handleDeletePhoto} // ← 🔥 ici
           />
         ))
       )}

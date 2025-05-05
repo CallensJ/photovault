@@ -29,6 +29,7 @@ export default function Card({
 
   const openModal = () => setShowModal(true);
   const closeModal = () => setShowModal(false);
+  
 
   return (
     <>

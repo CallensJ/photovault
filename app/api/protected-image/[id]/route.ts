@@ -3,6 +3,8 @@ import fs from "fs";
 import path from "path";
 import { prisma } from "@/lib/prisma"; // Assure-toi que prisma est bien importé
 import { existsSync } from "fs";
+import { authOptions } from "@/lib/auth";
+import { getServerSession } from "next-auth";
 
 // Cette route prend l'id du fichier (UUID)
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
@@ -57,4 +59,33 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     console.error("Erreur de lecture de l'image :", error);
     return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 });
   }
+}
+
+
+//suppression d'une image
+export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+  const session = await getServerSession(authOptions);
+
+  if (!session) {
+    return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+  }
+
+  const photo = await prisma.photography.findUnique({
+    where: { id: params.id },
+    select: { userId: true },
+  });
+
+  if (!photo) {
+    return NextResponse.json({ error: "Image introuvable" }, { status: 404 });
+  }
+
+  if (photo.userId !== session.user.id) {
+    return NextResponse.json({ error: "Accès refusé" }, { status: 403 });
+  }
+
+  const deleted = await prisma.photography.delete({
+    where: { id: params.id },
+  });
+
+  return NextResponse.json(deleted);
 }
