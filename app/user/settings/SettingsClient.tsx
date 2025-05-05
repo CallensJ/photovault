@@ -4,6 +4,7 @@ import { useState } from "react";
 import AvatarSettings from "./components/AvatarSettings";
 import UserInfoSettings from "./components/UserInfoSettings";
 import { Session } from "next-auth";
+import LikedPhotos from "./components/LikedPhotos";
 
 const tabs = [
   "Profil",
@@ -45,12 +46,7 @@ export default function SettingsClient({ session }: { session: Session }) {
             <UserInfoSettings />
           </div>
         )}
-        {activeTab === "Photos likées" && (
-          <div>
-            <h2 className="text-xl font-semibold mb-4">Photos que vous avez aimées</h2>
-            <p>[Galerie des photos likées]</p>
-          </div>
-        )}
+        {activeTab === "Photos likées" && <LikedPhotos />}
         {activeTab === "Utilisateurs suivis" && (
           <div>
             <h2 className="text-xl font-semibold mb-4">Utilisateurs que vous suivez</h2>

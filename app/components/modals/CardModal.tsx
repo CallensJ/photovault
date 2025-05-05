@@ -1,8 +1,12 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
-import { FaHeart, FaDownload, FaEllipsisH } from "react-icons/fa";
+import {useState } from "react";
+import { FaDownload, FaEllipsisH } from "react-icons/fa";
+import LikeButton from "../LikeImageButton";
+import { useSession } from "next-auth/react";
+
+
 
 interface CardModalProps {
   id: string; // Utilisation du type string ici pour l'ID
@@ -21,6 +25,7 @@ interface Comment {
   text: string;
 }
 
+
 export default function CardModal({
   id,
   fullImage,
@@ -28,9 +33,9 @@ export default function CardModal({
   avatarUrl,
   description,
   onClose,
-  onDelete
+  onDelete,
 }: CardModalProps) {
-  const [likes, setLikes] = useState(0);
+ 
   const [downloads, setDownloads] = useState(0);
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [comments, setComments] = useState<Comment[]>([]);
@@ -38,21 +43,26 @@ export default function CardModal({
   const [openMenuCommentId, setOpenMenuCommentId] = useState<number | null>(
     null
   );
+  const { data: session } = useSession();
 
-  //suppression
+
+
+
+
+  //suppression d'une image.
   const handleDeleteImage = async (id: string) => {
     const confirmed = confirm("Supprimer cette image ?");
     if (!confirmed) return;
-  
+
     try {
       const res = await fetch(`/api/protected-image/${id}`, {
         method: "DELETE",
       });
-  
+
       if (res.ok) {
         alert("Image supprimée");
         onClose(); // ← Ferme la modale
-       
+
         onDelete(id); // ← ici
       } else {
         const data = await res.json();
@@ -63,10 +73,8 @@ export default function CardModal({
     }
   };
 
-  const handleLike = () => setLikes(likes + 1);
 
-
-
+  //fonction telechargement
   const handleDownload = async () => {
     setDownloads(downloads + 1);
 
@@ -91,6 +99,8 @@ export default function CardModal({
     alert(`Option sélectionnée: ${option}`);
   };
 
+  // #### FONCTIONS COMMENTAIRES ###
+
   const handleAddComment = () => {
     if (newComment.trim() !== "") {
       const newCommentObj: Comment = {
@@ -104,8 +114,11 @@ export default function CardModal({
     }
   };
 
+  // supprimer un commentaire
   const handleDeleteComment = (id: number) =>
     setComments((prev) => prev.filter((c) => c.id !== id));
+
+  //reporter un commentaire
 
   const handleReportComment = () => {
     alert("Merci d’avoir signalé ce commentaire !");
@@ -171,14 +184,11 @@ export default function CardModal({
         {/* Like / Download */}
         <div className="flex gap-6 mb-4">
           <div className="flex flex-col items-center">
-            <button
-              onClick={handleLike}
-              className="text-red-500 hover:text-red-700"
-            >
-              <FaHeart size={24} />
-            </button>
-            <span className="text-white">{likes} Likes</span>
+          <LikeButton photoId={id} userEmail={session?.user?.email} />
+
           </div>
+
+          {/* download */}
           <div className="flex flex-col items-center">
             <button
               onClick={handleDownload}
@@ -201,16 +211,16 @@ export default function CardModal({
                 onClick={() => handleOptionSelect("report")}
                 className="p-2 cursor-pointer hover:bg-gray-200"
               >
-                🚩 Signaler l’image
+                Signaler l’image
               </li>
               <li
                 onClick={() => handleOptionSelect("favorite")}
                 className="p-2 cursor-pointer hover:bg-gray-200"
               >
-                ⭐ Ajouter aux favoris
+                Ajouter aux favoris
               </li>
               <li
-                 onClick={() => handleDeleteImage(id)}
+                onClick={() => handleDeleteImage(id)}
                 className="p-2 cursor-pointer hover:bg-gray-200"
               >
                 supprimer
@@ -258,7 +268,7 @@ export default function CardModal({
                       }}
                       className="px-4 py-2 hover:bg-gray-700 cursor-pointer text-sm"
                     >
-                      🚩 Signaler
+                      Signaler
                     </li>
                     <li
                       onClick={() => {
@@ -267,7 +277,7 @@ export default function CardModal({
                       }}
                       className="px-4 py-2 hover:bg-gray-700 cursor-pointer text-sm"
                     >
-                      🗑️ Supprimer
+                      Supprimer
                     </li>
                   </ul>
                 )}
