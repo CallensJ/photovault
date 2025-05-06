@@ -1,109 +1,77 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma'; // adapte le chemin si nécessaire
+import { prisma } from '@/lib/prisma'; 
+//  gère l'ajout d'un "like" à une photo spécifique, en fonction de l'ID de la photo passée dans l'URL.
 
-// GET – vérifier si l'utilisateur a liké cette photo
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
-    const photoId = params.id;
-    const userEmail = req.nextUrl.searchParams.get('userEmail');
-  
-    if (!userEmail) {
-      return NextResponse.json({ error: 'Email requis' }, { status: 400 });
-    }
-  
-    const user = await prisma.user.findUnique({ where: { email: userEmail } });
-    if (!user) {
-      return NextResponse.json({ error: 'Utilisateur non trouvé' }, { status: 404 });
-    }
-  
-    console.log('Recherche du like pour la photoId:', photoId);  // Ajoute un log
-  
-    const existingLike = await prisma.photoLike.findUnique({
-      where: {
-        userId_photoId: {
-          userId: user.id,
-          photoId,
-        },
-      },
-    });
-  
-    if (!existingLike) {
-      console.log('Aucun like trouvé pour cette photo par cet utilisateur');
-    }
-  
-    return NextResponse.json({ liked: !!existingLike });
-  }
-
-
-
-// POST – liker une photo
-export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
-  const photoId = params.id;
-  const { userEmail } = await req.json();
-
-  console.log('Photo ID:', photoId);  // Ajout d'un log pour vérifier l'id de la photo
-  console.log('User Email:', userEmail);  // Vérifie également l'email
-
-  if (!userEmail) {
-    return NextResponse.json({ error: 'Email requis' }, { status: 400 });
-  }
-
-  const user = await prisma.user.findUnique({ where: { email: userEmail } });
-  if (!user) {
-    return NextResponse.json({ error: 'Utilisateur non trouvé' }, { status: 404 });
-  }
-
+export async function POST(req: Request, { params }: { params: { id: string } }) {
   try {
+    const { id } = params;
+    const { userEmail } = await req.json();
+
+    if (!id || !userEmail) {
+      return new NextResponse('Bad Request', { status: 400 });
+    }
+
+    // Assure-toi que la photo existe dans la base de données
+    const photo = await prisma.photography.findUnique({
+      where: { id },
+    });
+
+    if (!photo) {
+      return new NextResponse('Photo not found', { status: 404 });
+    }
+
+    // Ajoute le like (vérifie que l'utilisateur n'a pas déjà liké)
     await prisma.photoLike.create({
       data: {
-        userId: user.id,
-        photoId,
+        user: { connect: { email: userEmail } },
+        photo: { connect: { id } },
       },
     });
-
+    // Met à jour le nombre de likes dans la photo
     await prisma.photography.update({
-      where: { id: photoId },
-      data: { likes: { increment: 1 } },
+      where: { id },
+      data: { likes: photo.likes + 1 },
     });
 
-    return NextResponse.json({ liked: true });
-  } catch (err) {
-    // En cas de doublon (déjà liké), on ignore
-    return NextResponse.json({ liked: true });
+    return NextResponse.json({ likes: photo.likes + 1 }); // Réponse avec le nombre mis à jour de likes
+  } catch (error) {
+    console.error('Erreur lors de la gestion du like:', error);
+    return new NextResponse('Internal Server Error', { status: 500 });
   }
 }
 
-// DELETE – unliker une photo
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
-  const photoId = params.id;
-  const { userEmail } = await req.json();
+// /app/api/users/[username]/liked-photos/route.ts
 
-  if (!userEmail) {
-    return NextResponse.json({ error: 'Email requis' }, { status: 400 });
-  }
+export async function GET(req: NextRequest, { params }: { params: { username: string } }) {
+  const { username } = params;
 
-  const user = await prisma.user.findUnique({ where: { email: userEmail } });
-  if (!user) {
-    return NextResponse.json({ error: 'Utilisateur non trouvé' }, { status: 404 });
+  if (!username) {
+    return new NextResponse("Nom d'utilisateur manquant", { status: 400 });
   }
 
   try {
-    await prisma.photoLike.delete({
+    // Utilise correctement Prisma pour récupérer les photos likées par l'utilisateur
+    const likedPhotos = await prisma.photoLike.findMany({
       where: {
-        userId_photoId: {
-          userId: user.id,
-          photoId,
+        user: {
+          username: username, // Assure-toi que ton modèle 'User' contient bien un champ 'username'
         },
+      },
+      include: {
+        photo: true, // Inclure les informations sur la photo
       },
     });
 
-    await prisma.photography.update({
-      where: { id: photoId },
-      data: { likes: { decrement: 1 } },
-    });
+    if (likedPhotos.length === 0) {
+      return new NextResponse("Aucune photo likée trouvée", { status: 404 });
+    }
 
-    return NextResponse.json({ liked: false });
-  } catch (err) {
-    // Ignore s'il n'y avait pas de like à retirer
-    return NextResponse.json({ liked: false });
+    // On renvoie les données des photos likées
+    const photos = likedPhotos.map((like) => like.photo);
+
+    return new NextResponse(JSON.stringify(photos), { status: 200 });
+  } catch (error) {
+    console.error("Erreur lors de la récupération des photos likées:", error);
+    return new NextResponse("Erreur serveur", { status: 500 });
   }
 }
