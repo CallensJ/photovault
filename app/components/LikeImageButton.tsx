@@ -1,14 +1,35 @@
-import { useState } from "react";
+'use client';
+
+import { useEffect, useState } from "react";
 import { FaHeart } from "react-icons/fa";
 
 interface LikeButtonProps {
-    photoId: string;
-    userEmail?: string; // ← accepte string OU undefined
-  }
+  photoId: string;
+  userEmail?: string;
+}
+
 function LikeButton({ photoId, userEmail }: LikeButtonProps) {
-  const [liked, setLiked] = useState(false);
+  const [liked, setLiked] = useState<boolean | null>(null); // null = loading
+
+  useEffect(() => {
+    const fetchInitialLike = async () => {
+      if (!userEmail) return;
+
+      try {
+        const res = await fetch(`/api/photos/${photoId}/like?userEmail=${userEmail}`);
+        const data = await res.json();
+        setLiked(data.liked); // ← true ou false
+      } catch (error) {
+        console.error("Erreur lors de la récupération du like :", error);
+      }
+    };
+
+    fetchInitialLike();
+  }, [photoId, userEmail]);
 
   const handleClick = async () => {
+    if (!userEmail || liked === null) return;
+
     try {
       const method = liked ? "DELETE" : "POST";
 
@@ -20,7 +41,7 @@ function LikeButton({ photoId, userEmail }: LikeButtonProps) {
         body: JSON.stringify({ userEmail }),
       });
 
-      setLiked(!liked); // on ne modifie le state qu'après confirmation
+      setLiked(!liked);
     } catch (error) {
       console.error("Erreur lors du like/unlike :", error);
     }
@@ -32,6 +53,7 @@ function LikeButton({ photoId, userEmail }: LikeButtonProps) {
       size={50}
       onClick={handleClick}
       className="cursor-pointer"
+      style={{ opacity: liked === null ? 0.5 : 1 }}
     />
   );
 }

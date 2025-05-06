@@ -1,12 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import {useState } from "react";
+import { useState } from "react";
 import { FaDownload, FaEllipsisH } from "react-icons/fa";
 import LikeButton from "../LikeImageButton";
 import { useSession } from "next-auth/react";
-
-
 
 interface CardModalProps {
   id: string; // Utilisation du type string ici pour l'ID
@@ -25,7 +23,6 @@ interface Comment {
   text: string;
 }
 
-
 export default function CardModal({
   id,
   fullImage,
@@ -35,7 +32,6 @@ export default function CardModal({
   onClose,
   onDelete,
 }: CardModalProps) {
- 
   const [downloads, setDownloads] = useState(0);
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [comments, setComments] = useState<Comment[]>([]);
@@ -44,10 +40,6 @@ export default function CardModal({
     null
   );
   const { data: session } = useSession();
-
-
-
-
 
   //suppression d'une image.
   const handleDeleteImage = async (id: string) => {
@@ -72,7 +64,6 @@ export default function CardModal({
       alert("Erreur réseau");
     }
   };
-
 
   //fonction telechargement
   const handleDownload = async () => {
@@ -184,8 +175,9 @@ export default function CardModal({
         {/* Like / Download */}
         <div className="flex gap-6 mb-4">
           <div className="flex flex-col items-center">
-          <LikeButton photoId={id} userEmail={session?.user?.email} />
-
+            {session?.user?.email && (
+              <LikeButton photoId={id} userEmail={session.user.email} />
+            )}
           </div>
 
           {/* download */}

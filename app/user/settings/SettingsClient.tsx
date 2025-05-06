@@ -1,3 +1,5 @@
+// gere  le tableau options de la page settings
+
 "use client";
 
 import { useState } from "react";
@@ -46,13 +48,17 @@ export default function SettingsClient({ session }: { session: Session }) {
             <UserInfoSettings />
           </div>
         )}
+        {/* section photos likees */}
         {activeTab === "Photos likées" && <LikedPhotos />}
+
+        {/* section utilisateurs suivis */}
         {activeTab === "Utilisateurs suivis" && (
           <div>
             <h2 className="text-xl font-semibold mb-4">Utilisateurs que vous suivez</h2>
             <p>[Liste des utilisateurs suivis]</p>
           </div>
         )}
+        
         {activeTab === "Mes Abonnements" && (
           <div>
             <h2 className="text-xl font-semibold mb-4">Utilisateurs à qui je suis abonné</h2>

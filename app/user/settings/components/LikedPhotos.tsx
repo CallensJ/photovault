@@ -1,3 +1,7 @@
+// ici le composant qui gere les photos qui ont ete likes par l'user en cours de session
+// et affichee dans settings
+
+
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import Image from "next/image";

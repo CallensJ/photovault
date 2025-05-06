@@ -9,40 +9,39 @@ import fs from "fs";
 import { Readable } from "stream";
 import { IncomingMessage } from "http";
 
-// Pas nécessaire ici (App Router n’utilise pas `api.bodyParser`) mais gardé pour info
 export const config = {
   api: {
     bodyParser: false,
   },
 };
 
-// Convertir une Request Web en IncomingMessage pour formidable
+
 function webRequestToNodeRequest(req: Request): IncomingMessage {
   const reader = req.body?.getReader();
   if (!reader) {
     throw new Error("Request body is missing or not readable.");
   }
 
-  // Créer un stream de lecture basé sur les données du corps de la requête
+
   const stream = new Readable({
     async read() {
       while (true) {
-        const { done, value } = await reader.read(); // Lire les données en chunks
+        const { done, value } = await reader.read(); 
         if (done) break; // Fin de stream
-        this.push(value); // Push chunk dans le stream
+        this.push(value); 
       }
-      this.push(null); // Signaler la fin du stream
+      this.push(null); 
     }
   });
 
-  // Ajouter les informations du req originel (headers, method, url) à notre stream
+ 
   const nodeReq = Object.assign(stream, {
     headers: Object.fromEntries(req.headers),
     method: req.method,
     url: req.url,
   });
 
-  // Retourner l'IncomingMessage, prêt pour être utilisé par formidable
+
   return nodeReq as IncomingMessage;
 }
 
