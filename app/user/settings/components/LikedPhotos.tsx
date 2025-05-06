@@ -1,21 +1,25 @@
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
+import CardModal from "@/app/components/modals/CardModal";
 
 interface Photo {
   id: string;
   url: string;
   title: string;
-  filename: string;
+  description?: string;
+  username?: string;
+  avatarUrl?: string;
 }
 
 const LikedPhotos = () => {
   const [likedPhotos, setLikedPhotos] = useState<Photo[]>([]);
+  const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
   const { data: session } = useSession();
 
   useEffect(() => {
     if (session?.user?.username) {
-      fetch(`/api/users/${session.user.username}/liked-photos`) // On appelle la nouvelle route pour récupérer les photos likées
+      fetch(`/api/users/${session.user.username}/liked-photos`) // Appel pour récupérer les photos likées
         .then((response) => response.json())
         .then((data) => setLikedPhotos(data))
         .catch((error) => console.error("Error fetching liked photos", error));
@@ -24,14 +28,11 @@ const LikedPhotos = () => {
 
   return (
     <div>
-      <h2 className="text-xl font-semibold mb-4">
-        Photos que vous avez likées
-      </h2>
+      <h2 className="text-xl font-semibold mb-4">Photos que vous avez likées</h2>
       {likedPhotos.length > 0 ? (
         likedPhotos.map((photo) => {
-          console.log("photo.url:", photo.url); // Vérification du champ 'url'
+          console.log("photo.url:", photo.url);
 
-          // Si le chemin contient déjà '/images/user-uploads/', on n'ajoute rien de plus
           const cleanedUrl = photo.url
             .replace(/^\/?images\//, "")
             .replace(/^user-uploads\//, "");
@@ -41,12 +42,11 @@ const LikedPhotos = () => {
           return (
             <div key={photo.id} className="photo-card">
               <Image
-                src={`/api/uploads/images/user-uploads/${photo.url
-                  .split("/")
-                  .pop()}`} // Assurez-vous que `photo.filename` contient le nom du fichier
+                src={finalPath} // URL correcte pour l'image
                 alt={photo.title}
                 width={300}
                 height={350}
+                onClick={() => setSelectedPhoto(photo)} // Sélection de la photo au clic
                 className="rounded-lg object-contain"
               />
             </div>
@@ -54,6 +54,18 @@ const LikedPhotos = () => {
         })
       ) : (
         <p>Aucune photo likée trouvée.</p>
+      )}
+      {/* ✅ CardModal toujours en dehors du ternaire */}
+      {selectedPhoto && (
+        <CardModal
+          id={selectedPhoto.id}
+          fullImage={`/api/uploads/images/user-uploads/${selectedPhoto.url.split('/').pop()}`}
+          username={selectedPhoto.username || "Utilisateur inconnu"} // Valeur par défaut si le username est manquant
+          avatarUrl={selectedPhoto.avatarUrl || "/default-avatar.png"} // Valeur par défaut pour l'avatar si manquant
+          description={selectedPhoto.description || "Pas de description."} // Valeur par défaut pour la description
+          onClose={() => setSelectedPhoto(null)} // Fermeture du modal
+          onDelete={(id) => console.log("delete", id)} // Logique de suppression (à adapter)
+        />
       )}
     </div>
   );
