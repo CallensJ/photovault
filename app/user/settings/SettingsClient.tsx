@@ -23,21 +23,23 @@ export default function SettingsClient({ session }: { session: Session }) {
   return (
     <div className="max-w-6xl mx-auto px-4 py-8 flex gap-6">
       <aside className="w-1/4 sticky top-24">
-        <nav className="flex flex-col gap-4">
-          {tabs.map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`text-left px-4 py-2 rounded-lg ${
-                activeTab === tab
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-100 text-gray-800 hover:bg-gray-200"
-              }`}
-            >
-              {tab}
-            </button>
-          ))}
-        </nav>
+      <nav className="flex flex-col gap-4">
+  {tabs.map((tab) => (
+    <button
+      key={tab}
+      onClick={() => setActiveTab(tab)}
+      className={`text-left cursor-pointer px-4 py-2 rounded-lg font-bold text-white no-underline ${
+        activeTab === tab ? "" : "opacity-80 hover:opacity-100"
+      }`}
+      style={{
+        background: activeTab === tab ? "linear-gradient(90deg, #f9572a, #ff9b05)" : "#f3f4f6", // fallback gray
+        color: activeTab === tab ? "#ffffff" : "#1f2937", // white or gray-800
+      }}
+    >
+      {tab}
+    </button>
+  ))}
+</nav>
       </aside>
 
       <section className="flex-1 bg-[#393a3a] p-6 rounded-xl shadow-md">

@@ -18,7 +18,6 @@ export default function Navbar() {
   const { data: session, status } = useSession();
   const [isSessionLoaded, setIsSessionLoaded] = useState(false);
 
-
   // Déboguer la session pour comprendre l'état de la session
   useEffect(() => {
     console.log("Session status: ", status);
@@ -26,7 +25,7 @@ export default function Navbar() {
 
     if (status === "authenticated" || status === "unauthenticated") {
       setIsSessionLoaded(true);
-   
+
       console.log("User logged in:", session?.user);
     }
   }, [status, session]);
@@ -90,7 +89,7 @@ export default function Navbar() {
             <>
               <button
                 onClick={openLogin}
-                className="hidden md:block bg-blue-500 text-white px-4 py-2 rounded-md"
+                className="hidden md:block bg-transparent cursor-pointer border border-white text-white px-4 py-2 rounded-md hover:bg-white hover:text-blue-500 transition duration-200"
               >
                 Login
               </button>
