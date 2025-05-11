@@ -40,12 +40,10 @@ export default async function handler(
     form.parse(req, async (err: Error, fields, files) => {
       // Typage explicite des paramètres
       if (err) {
-        return res
-          .status(500)
-          .json({
-            message: "Erreur lors du téléchargement de l'avatar",
-            error: err.message,
-          });
+        return res.status(500).json({
+          message: "Erreur lors du téléchargement de l'avatar",
+          error: err.message,
+        });
       }
 
       // Vérifie que l'avatar est bien téléchargé
@@ -61,11 +59,9 @@ export default async function handler(
         avatarFile.mimetype &&
         !allowedImageTypes.includes(avatarFile.mimetype)
       ) {
-        return res
-          .status(400)
-          .json({
-            message: "Le fichier téléchargé n'est pas une image valide",
-          });
+        return res.status(400).json({
+          message: "Le fichier téléchargé n'est pas une image valide",
+        });
       }
       // Vérification de l'extension de l'image
       const fileExtension = path
@@ -95,13 +91,11 @@ export default async function handler(
           where: { username: String(username) },
           data: { avatar: avatarPath },
         });
-        
-        return res
-          .status(200)
-          .json({
-            message: "Avatar téléchargé et mis à jour avec succès",
-            avatarPath,
-          });
+
+        return res.status(200).json({
+          message: "Avatar téléchargé et mis à jour avec succès",
+          avatarPath,
+        });
       } catch (error) {
         console.error(error);
         return res

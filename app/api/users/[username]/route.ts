@@ -1,6 +1,3 @@
-
-
-
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import formidable, { File } from "formidable";
@@ -15,32 +12,28 @@ export const config = {
   },
 };
 
-
 function webRequestToNodeRequest(req: Request): IncomingMessage {
   const reader = req.body?.getReader();
   if (!reader) {
     throw new Error("Request body is missing or not readable.");
   }
 
-
   const stream = new Readable({
     async read() {
       while (true) {
-        const { done, value } = await reader.read(); 
+        const { done, value } = await reader.read();
         if (done) break; // Fin de stream
-        this.push(value); 
+        this.push(value);
       }
-      this.push(null); 
-    }
+      this.push(null);
+    },
   });
 
- 
   const nodeReq = Object.assign(stream, {
     headers: Object.fromEntries(req.headers),
     method: req.method,
     url: req.url,
   });
-
 
   return nodeReq as IncomingMessage;
 }
@@ -52,7 +45,10 @@ export async function GET(
 ) {
   const { username } = context.params;
   if (!username) {
-    return NextResponse.json({ error: "Nom d'utilisateur manquant" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Nom d'utilisateur manquant" },
+      { status: 400 }
+    );
   }
 
   try {
@@ -78,7 +74,10 @@ export async function GET(
     });
 
     if (!user) {
-      return NextResponse.json({ error: "Utilisateur non trouvé" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Utilisateur non trouvé" },
+        { status: 404 }
+      );
     }
 
     return NextResponse.json(user);
@@ -95,16 +94,19 @@ export async function POST(
 ) {
   // const { params } = context;
   const { username } = context.params;
-  // const username = params?.username;  // On accède ici à `params.username`
-  
+
+
   if (!username) {
-    return NextResponse.json({ error: "Nom d'utilisateur manquant" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Nom d'utilisateur manquant" },
+      { status: 400 }
+    );
   }
 
   const uploadDir = path.join(process.cwd(), "public", "images", "avatars");
-  
+
   fs.mkdirSync(uploadDir, { recursive: true });
-    //upload de fichier
+  //upload de fichier
   const form = formidable({
     uploadDir,
     keepExtensions: true,
@@ -117,15 +119,19 @@ export async function POST(
     const nodeReq = webRequestToNodeRequest(req);
 
     // Traiter le formulaire
-    const { files } = await new Promise<{ files: formidable.Files }>((resolve, reject) => {
-      form.parse(nodeReq, (err, fields, files) => {
-        if (err) reject(err);
-        else resolve({ files });
-      });
-    });
+    const { files } = await new Promise<{ files: formidable.Files }>(
+      (resolve, reject) => {
+        form.parse(nodeReq, (err, fields, files) => {
+          if (err) reject(err);
+          else resolve({ files });
+        });
+      }
+    );
 
-    const avatarFile = Array.isArray(files.avatar) ? files.avatar[0] : files.avatar;
-    
+    const avatarFile = Array.isArray(files.avatar)
+      ? files.avatar[0]
+      : files.avatar;
+
     if (!avatarFile || !(avatarFile as File).newFilename) {
       return NextResponse.json({ error: "Fichier invalide" }, { status: 400 });
     }
@@ -140,6 +146,9 @@ export async function POST(
     return NextResponse.json({ message: "Avatar mis à jour", avatarPath });
   } catch (error) {
     console.error("[UPLOAD ERROR]", error);
-    return NextResponse.json({ error: "Erreur lors de l'upload" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Erreur lors de l'upload" },
+      { status: 500 }
+    );
   }
 }
