@@ -16,8 +16,8 @@ type FormData = {
 type FormErrors = Partial<Record<keyof FormData, string>>;
 
 export default function UserInfoSettings() {
-    const [showPassword, setShowPassword] = useState(false);
-const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const [formData, setFormData] = useState({
     email: "",
@@ -143,53 +143,59 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
       {/* Password */}
       <div className="relative">
-  <label htmlFor="password" className="block font-medium">Mot de passe</label>
-  <input
-    id="password"
-    name="password"
-    value={formData.password}
-    onChange={handleChange}
-    type={showPassword ? "text" : "password"}
-    className={`mt-1 w-full px-4 py-2 rounded-lg bg-[#1c2027] border ${
-      errors.password ? "border-red-500 bg-red-50" : "border-gray-300"
-    }`}
-  />
-    <button
-    type="button"
-    onClick={() => setShowPassword((prev) => !prev)}
-    className="absolute right-3 top-9 text-sm text-gray-600"
-  >
-    {showPassword ? "Masquer" : "Afficher"}
-  </button>
-  {errors.password && (
-    <p className="text-sm text-red-600 mt-1">{errors.password}</p>
-  )}
-</div>
+        <label htmlFor="password" className="block font-medium">
+          Mot de passe
+        </label>
+        <input
+          id="password"
+          name="password"
+          value={formData.password}
+          onChange={handleChange}
+          type={showPassword ? "text" : "password"}
+          className={`mt-1 w-full px-4 py-2 rounded-lg bg-[#1c2027] border ${
+            errors.password ? "border-red-500 bg-red-50" : "border-gray-300"
+          }`}
+        />
+        <button
+          type="button"
+          onClick={() => setShowPassword((prev) => !prev)}
+          className="absolute right-3 top-9 text-sm text-gray-600"
+        >
+          {showPassword ? "Masquer" : "Afficher"}
+        </button>
+        {errors.password && (
+          <p className="text-sm text-red-600 mt-1">{errors.password}</p>
+        )}
+      </div>
 
       {/* Confirm Password */}
       <div className="relative">
-  <label htmlFor="confirmPassword" className="block font-medium">Confirmer le mot de passe</label>
-  <input
-    id="confirmPassword"
-    name="confirmPassword"
-    value={formData.confirmPassword}
-    onChange={handleChange}
-    type={showConfirmPassword ? "text" : "password"}
-    className={`mt-1 w-full px-4 py-2 rounded-lg bg-[#1c2027] border ${
-      errors.confirmPassword ? "border-red-500 bg-red-50" : "border-gray-300"
-    }`}
-  />
-  <button
-    type="button"
-    onClick={() => setShowConfirmPassword((prev) => !prev)}
-    className="absolute right-3 top-9 text-sm text-gray-600"
-  >
-    {showConfirmPassword ? "Masquer" : "Afficher"}
-  </button>
-  {errors.confirmPassword && (
-    <p className="text-sm text-red-600 mt-1">{errors.confirmPassword}</p>
-  )}
-</div>
+        <label htmlFor="confirmPassword" className="block font-medium">
+          Confirmer le mot de passe
+        </label>
+        <input
+          id="confirmPassword"
+          name="confirmPassword"
+          value={formData.confirmPassword}
+          onChange={handleChange}
+          type={showConfirmPassword ? "text" : "password"}
+          className={`mt-1 w-full px-4 py-2 rounded-lg bg-[#1c2027] border ${
+            errors.confirmPassword
+              ? "border-red-500 bg-red-50"
+              : "border-gray-300"
+          }`}
+        />
+        <button
+          type="button"
+          onClick={() => setShowConfirmPassword((prev) => !prev)}
+          className="absolute right-3 top-9 text-sm text-gray-600"
+        >
+          {showConfirmPassword ? "Masquer" : "Afficher"}
+        </button>
+        {errors.confirmPassword && (
+          <p className="text-sm text-red-600 mt-1">{errors.confirmPassword}</p>
+        )}
+      </div>
 
       <button
         type="submit"
@@ -197,7 +203,7 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
       >
         Sauvegarder
       </button>
-  <DeleteAccountButton />
+      <DeleteAccountButton />
     </form>
   );
 }
