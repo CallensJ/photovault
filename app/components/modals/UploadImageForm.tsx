@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import { useState } from "react";
 import { useModal } from "@/app/context/ModalContext";
 import ImagePicker from "../ImagePicker";
@@ -17,7 +17,7 @@ export default function UploadImageForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Form submitted"); 
+    console.log("Form submitted");
 
     // Vérification de la session pour l'utilisateur connecté
     if (status !== "authenticated") {
@@ -67,7 +67,7 @@ export default function UploadImageForm() {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white p-6 rounded-lg max-w-md w-full">
+      <div className="bg-[#393a3a] p-6 rounded-lg max-w-md w-full">
         <h2 className="text-xl font-bold mb-4">Upload an image</h2>
         <form onSubmit={handleSubmit}>
           <input
@@ -77,7 +77,7 @@ export default function UploadImageForm() {
             required
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="w-full mb-2 p-2 border rounded"
+            className="w-full bg-[#1c2027] mb-2 p-2 border rounded"
           />
 
           <textarea
@@ -85,7 +85,7 @@ export default function UploadImageForm() {
             placeholder="Description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="w-full mb-2 p-2 border rounded"
+            className="w-full bg-[#1c2027] mb-2 p-2 border rounded"
           />
 
           <input
@@ -94,7 +94,7 @@ export default function UploadImageForm() {
             placeholder="Catégories (séparées par des virgules)"
             value={categories}
             onChange={(e) => setCategories(e.target.value)}
-            className="w-full mb-2 p-2 border rounded"
+            className="w-full bg-[#1c2027] mb-2 p-2 border rounded"
           />
 
           <ImagePicker onFileSelected={setPickedImage} />
@@ -105,7 +105,7 @@ export default function UploadImageForm() {
               id="isPremium"
               checked={isPremium}
               onChange={() => setIsPremium(!isPremium)} // Toggle de la checkbox
-              className="mr-2"
+              className="mr-2 bg-[#1c2027]"
             />
             <label htmlFor="isPremium">Photo Premium</label>
           </div>
@@ -114,14 +114,29 @@ export default function UploadImageForm() {
             <button
               type="button"
               onClick={closeUploadImage}
-              className="px-4 py-2 bg-gray-300 rounded"
+              className="px-4 py-2 rounded bg-gray-300 text-black transition-all duration-300 hover:bg-gray-400 "
             >
               Annuler
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-4 py-2 bg-blue-500 text-white rounded"
+              className="px-4 py-2 rounded text-white transition-all duration-300"
+              style={{
+                backgroundColor: "#f9572a",
+                backgroundImage: isSubmitting ? "none" : undefined,
+              }}
+              onMouseEnter={(e) => {
+                if (!isSubmitting) {
+                  e.currentTarget.style.backgroundImage =
+                    "linear-gradient(90deg, #f9572a, #ff9b05)";
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!isSubmitting) {
+                  e.currentTarget.style.backgroundImage = "none";
+                }
+              }}
             >
               {isSubmitting ? "Envoi..." : "Upload"}
             </button>
