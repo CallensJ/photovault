@@ -6,6 +6,8 @@ import { useSession } from "next-auth/react"; // Import de useSession
 import Image from "next/image";
 import CardModal from "@/app/components/modals/CardModal";
 import UserProfileFormMsg from "@/app/components/modals/UserProfileFormMsg";
+import SuscribeBtn from "./components/SuscribeBtn";
+import BiographyForm from "./components/BiographyForm";
 
 type SelectedImage = {
   id: string;
@@ -133,9 +135,11 @@ export default function ProfilePage() {
             >
               {showMessage ? "Galerie" : "Message"}
             </button>
+            <SuscribeBtn />
           </div>
         </div>
       </div>
+        <BiographyForm />
 
       <p className="mb-6 text-gray-700 italic">{user.bio}</p>
 
