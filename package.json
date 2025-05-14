@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "test": "jest",
-     "test:watch": "jest --watch"
+    "test:watch": "jest --watch"
   },
   "dependencies": {
     "@next-auth/prisma-adapter": "^1.0.7",
@@ -28,22 +28,30 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4.1.4",
+    "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
     "@types/formidable": "^3.4.5",
     "@types/fs-extra": "^11.0.4",
+    "@types/jest": "^29.5.14",
     "@types/mime-types": "^2.1.4",
     "@types/next-auth": "^3.13.0",
     "@types/node": "^20.17.32",
+    "@types/node-fetch": "^2.6.12",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@whatwg-node/fetch": "^0.10.7",
     "autoprefixer": "^10.4.21",
     "eslint": "^9",
     "eslint-config-next": "15.3.1",
     "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "node-fetch": "^2.7.0",
     "postcss": "^8.5.3",
     "supertest": "^7.1.0",
     "tailwindcss": "^4.1.4",
+    "text-encoding": "^0.7.0",
+    "ts-node": "^10.9.2",
     "typescript": "^5"
   }
 }

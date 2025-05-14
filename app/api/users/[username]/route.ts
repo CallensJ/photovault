@@ -14,7 +14,6 @@ export const config = {
   },
 };
 
-// 🔧 Conversion Request Web vers IncomingMessage (utilisé pour formidable)
 function webRequestToNodeRequest(req: Request): IncomingMessage {
   const reader = req.body?.getReader();
   if (!reader) {
@@ -99,7 +98,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
   }
 
-  // Le reste de ton code ici pour gérer l'upload de l'avatar
   const username = session.user.username;
   const uploadDir = path.join(process.cwd(), "public", "images", "avatars");
   fs.mkdirSync(uploadDir, { recursive: true });
