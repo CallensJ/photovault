@@ -5,6 +5,8 @@ import path from "path";
 import fs from "fs";
 import { Readable } from "stream";
 import { IncomingMessage } from "http";
+import {authOptions } from "@/lib/auth";
+import { getServerSession } from "next-auth";
 
 export const config = {
   api: {
@@ -12,6 +14,7 @@ export const config = {
   },
 };
 
+// 🔧 Conversion Request Web vers IncomingMessage (utilisé pour formidable)
 function webRequestToNodeRequest(req: Request): IncomingMessage {
   const reader = req.body?.getReader();
   if (!reader) {
@@ -22,7 +25,7 @@ function webRequestToNodeRequest(req: Request): IncomingMessage {
     async read() {
       while (true) {
         const { done, value } = await reader.read();
-        if (done) break; // Fin de stream
+        if (done) break;
         this.push(value);
       }
       this.push(null);
@@ -38,7 +41,7 @@ function webRequestToNodeRequest(req: Request): IncomingMessage {
   return nodeReq as IncomingMessage;
 }
 
-// GET — infos utilisateur
+// 📥 GET — infos utilisateur
 export async function GET(
   req: Request,
   context: { params: { username: string } }
@@ -87,38 +90,29 @@ export async function GET(
   }
 }
 
-// POST — upload avatar
-export async function POST(
-  req: Request,
-  context: { params: { username: string } }
-) {
-  // const { params } = context;
-  const { username } = context.params;
+// 📤 POST — upload avatar
+export async function POST(req: Request) {
+  // Utiliser getServerSession pour obtenir la session
+  const session = await getServerSession(authOptions); // Utilisation correcte de getServerSession
 
-
-  if (!username) {
-    return NextResponse.json(
-      { error: "Nom d'utilisateur manquant" },
-      { status: 400 }
-    );
+  if (!session || !session.user?.username) {
+    return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
   }
 
+  // Le reste de ton code ici pour gérer l'upload de l'avatar
+  const username = session.user.username;
   const uploadDir = path.join(process.cwd(), "public", "images", "avatars");
-
   fs.mkdirSync(uploadDir, { recursive: true });
-  //upload de fichier
+
   const form = formidable({
     uploadDir,
     keepExtensions: true,
-    maxFileSize: 5 * 1024 * 1024, // 5MB
+    maxFileSize: 5 * 1024 * 1024,
     filter: (part) => part.mimetype?.startsWith("image/") || false,
   });
 
   try {
-    // Convertir la requête web en format Node pour formidable
     const nodeReq = webRequestToNodeRequest(req);
-
-    // Traiter le formulaire
     const { files } = await new Promise<{ files: formidable.Files }>(
       (resolve, reject) => {
         form.parse(nodeReq, (err, fields, files) => {
@@ -128,9 +122,7 @@ export async function POST(
       }
     );
 
-    const avatarFile = Array.isArray(files.avatar)
-      ? files.avatar[0]
-      : files.avatar;
+    const avatarFile = Array.isArray(files.avatar) ? files.avatar[0] : files.avatar;
 
     if (!avatarFile || !(avatarFile as File).newFilename) {
       return NextResponse.json({ error: "Fichier invalide" }, { status: 400 });
@@ -143,12 +135,12 @@ export async function POST(
       data: { avatar: avatarPath },
     });
 
-    return NextResponse.json({ message: "Avatar mis à jour", avatarPath });
-  } catch (error) {
-    console.error("[UPLOAD ERROR]", error);
-    return NextResponse.json(
-      { error: "Erreur lors de l'upload" },
-      { status: 500 }
-    );
+    return NextResponse.json({
+      message: "Avatar mis à jour",
+      avatarPath,
+    });
+  } catch (err: unknown) {
+    console.error("[UPLOAD ERROR]", err);
+    return NextResponse.json({ error: "Erreur serveur", details: (err as Error).message }, { status: 500 });
   }
 }

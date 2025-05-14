@@ -29,45 +29,46 @@ export default function AvatarSettings() {
     reader.readAsDataURL(file);
   };
 
-  const handleSaveAvatar = async () => {
-    if (!pickedFile || !session?.user?.username) return;
-  
-    const formData = new FormData();
-    formData.append("avatar", pickedFile);
-  
-    try {
-      const res = await fetch(`/api/users/${session.user.username}`, {
-        method: "POST",
-        body: formData,
-      });
-  
-      // Vérification de la réponse
-      if (!res.ok) {
-        const result = await res.json();
-        alert(`Erreur : ${result.error || "Échec de l'envoi"}`);
-        return;
-      }
-  
-      const data = await res.json();
-  
-      if (data.avatarPath) {
-        // Si l'upload est réussi, tu peux mettre à jour l'avatar dans l'interface utilisateur
-        alert("Avatar mis à jour");
-  
-        // Option 1 : Recharger la page pour appliquer les changements (solution simple mais pas optimale)
-        window.location.reload();
-  
-        // Option 2 : Si tu veux éviter de recharger la page, tu peux juste mettre à jour la session.
-        // Cela dépend de la manière dont tu gères la session utilisateur. Si tu veux éviter le reload de page,
-        // tu pourrais soit appeler une API pour mettre à jour la session, soit forcer le rafraîchissement de la session.
-      } else {
-        alert("Erreur lors de l'upload de l'avatar");
-      }
-    } catch (error) {
-      console.error(error);
-      alert("Une erreur est survenue lors de l'upload de l'avatar");
+const handleSaveAvatar = async () => {
+  if (!pickedFile || !session?.user?.username) return;
+
+  const formData = new FormData();
+  formData.append("avatar", pickedFile);
+
+  try {
+    const res = await fetch(`/api/users/${session.user.username}`, {
+      method: "POST",
+      body: formData,
+    });
+
+    // Vérification du statut HTTP
+    if (!res.ok) {
+      const errorText = await res.text(); // Lire le texte brut si la réponse n'est pas JSON
+      alert(`Erreur : ${errorText || "Échec de l'envoi"}`);
+      return;
     }
-  };
+
+    // Vérification que la réponse contient bien un JSON valide
+    const data = await res.json().catch(() => null); // Essaye de parser JSON, sinon retourne null
+    if (!data) {
+      alert("Réponse inattendue du serveur");
+      return;
+    }
+
+    if (data.avatarPath) {
+      // Si l'upload est réussi, tu peux mettre à jour l'avatar dans l'interface utilisateur
+      alert("Avatar mis à jour");
+
+      // Option 1 : Recharger la page pour appliquer les changements
+      window.location.reload();
+    } else {
+      alert("Erreur lors de l'upload de l'avatar");
+    }
+  } catch (error) {
+    console.error(error);
+    alert("Une erreur est survenue lors de l'upload de l'avatar");
+  }
+};
 
   return (
     <div className="space-y-4">

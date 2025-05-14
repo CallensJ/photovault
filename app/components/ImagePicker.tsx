@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import { useRef, useState } from "react";
 import Image from "next/image";
 
@@ -37,7 +37,12 @@ export default function ImagePicker({ onFileSelected }: ImagePickerProps) {
       <div className="flex items-center gap-6">
         <div className="relative w-24 h-24 rounded-full overflow-hidden bg-gray-100 border">
           {pickedImage ? (
-            <Image src={pickedImage} alt="Aperçu" fill className="object-cover" />
+            <Image
+              src={pickedImage}
+              alt="Aperçu"
+              fill
+              className="object-cover"
+            />
           ) : (
             <p className="text-sm text-gray-500 flex items-center justify-center w-full h-full text-center">
               Aucune image
@@ -53,22 +58,23 @@ export default function ImagePicker({ onFileSelected }: ImagePickerProps) {
             ref={imageInputRef}
             onChange={handleImageChange}
           />
-<button
-  type="button"
-  onClick={handlePickClick}
-  className="px-4 py-2 text-white rounded-lg cursor-pointer transition-all duration-300"
-  style={{
-    backgroundColor: "#f9572a",
-  }}
-  onMouseEnter={(e) => {
-    e.currentTarget.style.backgroundImage = "linear-gradient(90deg, #f9572a, #ff9b05)";
-  }}
-  onMouseLeave={(e) => {
-    e.currentTarget.style.backgroundImage = "none";
-  }}
->
-  Choisir une image
-</button>
+          <button
+            type="button"
+            onClick={handlePickClick}
+            className="px-4 py-2 text-white rounded-lg cursor-pointer transition-all duration-300"
+            style={{
+              backgroundColor: "#f9572a",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundImage =
+                "linear-gradient(90deg, #f9572a, #ff9b05)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundImage = "none";
+            }}
+          >
+            Choisir une image
+          </button>
         </div>
       </div>
     </div>

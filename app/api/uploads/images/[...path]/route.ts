@@ -7,7 +7,7 @@ export async function GET(
   req: NextRequest,
   context: { params: { path: string[] } }
 ) {
-  const { params } = context; // ✅ accède à params proprement
+  const { params } = context; 
   console.log("API HIT:", params.path);
 
   if (!params.path || params.path.length === 0) {
