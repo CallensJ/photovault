@@ -33,7 +33,7 @@ export default function Navbar() {
   const isAuthenticated = !!session;
   const username = session?.user?.username?.replace("@", "");
 
-  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+  
 
   const handleLogout = async () => {
     console.log("Logging out...");
@@ -160,12 +160,7 @@ export default function Navbar() {
           )}
         </div>
 
-        {/* Hamburger Menu */}
-        <div className="md:hidden">
-          <button className="text-white" onClick={toggleMenu}>
-            {isMenuOpen ? "✖" : "☰"}
-          </button>
-        </div>
+   
       </div>
 
       {/* Mobile Menu */}
