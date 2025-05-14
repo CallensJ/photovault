@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import Image from "next/image";
-import { useSession } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 // import { useRouter } from "next/navigation";
 
 export default function AvatarSettings() {
@@ -56,10 +56,16 @@ const handleSaveAvatar = async () => {
     }
 
     if (data.avatarPath) {
-      // Si l'upload est réussi, tu peux mettre à jour l'avatar dans l'interface utilisateur
       alert("Avatar mis à jour");
+      // Si l'upload est réussi,  mettre à jour l'avatar dans l'interface utilisateur
+           await signIn("credentials", { // Remplacer "credentials" par la méthode d'auth utilisée
+          redirect: false, // ne pas rediriger
+          username: session.user.username,  // Utilise le bon paramètre de login
+          password: "",  // Si besoin de réutiliser un mot de passe, sinon laisse vide
+        });
 
-      // Option 1 : Recharger la page pour appliquer les changements
+
+     //Recharge la page pour appliquer les changements
       window.location.reload();
     } else {
       alert("Erreur lors de l'upload de l'avatar");
