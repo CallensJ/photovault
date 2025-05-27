@@ -6,7 +6,7 @@ export default function NavSearchBar() {
   const [filteredCategories, setFilteredCategories] = useState<string[]>([]);
 
   useEffect(() => {
-    // Remplacer par l'appel à l'API pour récupérer les catégories depuis la base de données.
+    // Remplacer par l'appel à l'api pour récupérer les catégories depuis la base de données.
     setCategories(['Nature', 'Art', 'Voyage', 'Animaux', 'Technologie', 'Sports']);
   }, []);
 

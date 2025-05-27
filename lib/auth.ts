@@ -18,12 +18,12 @@ export const authOptions: NextAuthOptions = {
 
         const user = await prisma.user.findUnique({
           where: { email: credentials.email },
-          select: { // Récupère `isPremium` et autres données nécessaires
+          select: { 
             id: true,
             email: true,
             username: true,
             avatar: true,
-            isPremium: true, // Assure-toi de récupérer `isPremium`
+            isPremium: true, 
             password: true,
           },
         });
@@ -38,14 +38,14 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Incorrect password");
         }
 
-        // Retourner l'objet utilisateur avec les informations pertinentes
+       
         return {
           id: user.id,
           email: user.email,
           name: user.username,
           avatar: user.avatar || "/images/avatars/dummy-avatar.png",
           username: user.username,
-          isPremium: user.isPremium, // Ajoute `isPremium` ici
+          isPremium: user.isPremium, 
         };
       },
     }),
@@ -60,8 +60,8 @@ export const authOptions: NextAuthOptions = {
         token.avatar = user.avatar || "/images/avatars/dummy-avatar.png";
         token.username = user.username;
         token.name = user.name;
-        token.isPremium = user.isPremium; // Ajoute `isPremium` au token
-        token.accessToken = "your-generated-access-token"; // Génère ou récupère ton accessToken ici
+        token.isPremium = user.isPremium; 
+        token.accessToken = "your-generated-access-token"; 
       }
       return token;
     },
@@ -71,8 +71,8 @@ export const authOptions: NextAuthOptions = {
         session.user.avatar = token.avatar as string;
         session.user.username = token.username as string;
         session.user.name = token.name as string;
-        session.user.isPremium = token.isPremium as boolean; // Ajoute `isPremium` à la session
-        session.accessToken = token.accessToken as string; // Assigner l'accessToken à la session
+        session.user.isPremium = token.isPremium as boolean; 
+        session.accessToken = token.accessToken as string; 
       }
       return session;
     },

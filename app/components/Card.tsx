@@ -3,8 +3,7 @@
 import Image from "next/image";
 import { useState } from "react";
 import CardModal from "./modals/CardModal";
-import Link from "next/link"; // Assure-toi d'importer le composant Link
-
+import Link from "next/link"; 
 interface CardProps {
   id: string;
   imageUrl: string;
@@ -73,7 +72,7 @@ export default function Card({
 
       {showModal && (
         <CardModal
-          id={id} // Ajout de l'id ici
+          id={id} 
           fullImage={imageUrl}
           username={username}
           avatarUrl={avatarUrl}

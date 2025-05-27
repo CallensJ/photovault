@@ -48,7 +48,7 @@ export const ModalProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <ModalContext.Provider
-      value={{ showLogin, showSignup, openLogin, openSignup, closeModals,    openUploadImage,      // ✅
+      value={{ showLogin, showSignup, openLogin, openSignup, closeModals,    openUploadImage,    
         closeUploadImage,     // ✅
         isUploadImageOpen,   
        }}

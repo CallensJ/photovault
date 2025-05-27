@@ -18,7 +18,6 @@ export default function Navbar() {
   const { data: session, status } = useSession();
   const [isSessionLoaded, setIsSessionLoaded] = useState(false);
 
-  // Déboguer la session pour comprendre l'état de la session
   useEffect(() => {
     console.log("Session status: ", status);
     console.log("Session data: ", session);
@@ -33,11 +32,9 @@ export default function Navbar() {
   const isAuthenticated = !!session;
   const username = session?.user?.username?.replace("@", "");
 
-  
-
   const handleLogout = async () => {
     console.log("Logging out...");
-    await signOut({ callbackUrl: "/" }); // Redirection après déconnexion
+    await signOut({ callbackUrl: "/" });
   };
 
   useEffect(() => {
@@ -159,8 +156,6 @@ export default function Navbar() {
             </div>
           )}
         </div>
-
-   
       </div>
 
       {/* Mobile Menu */}

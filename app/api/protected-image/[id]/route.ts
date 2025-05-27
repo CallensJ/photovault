@@ -19,7 +19,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     return NextResponse.json({ error: 'Image non trouvée dans la base de données' }, { status: 404 });
   }
 
-  const imageFilename = photo.url.split('/').pop(); // Récupère le nom du fichier depuis l'URL stockée dans la base de données (par exemple, "1746364698697-F45GGDS3.jpeg")
+  const imageFilename = photo.url.split('/').pop(); // recupere le nom du fichier depuis l'URL stockée dans la base de données)
 
   // Vérification si imageFilename est défini
   if (!imageFilename) {
@@ -38,7 +38,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     const file = await fs.promises.readFile(imagePath);
 
     // Déterminer l'extension du fichier pour définir le type de contenu
-    const ext = path.extname(imageFilename).toLowerCase(); // Ici imageFilename est garanti d'être une chaîne de caractères
+    const ext = path.extname(imageFilename).toLowerCase(); 
     const contentTypeMap: Record<string, string> = {
       '.jpg': 'image/jpeg',
       '.jpeg': 'image/jpeg',
@@ -48,7 +48,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 
     const contentType = contentTypeMap[ext] || 'application/octet-stream';
 
-    // Retourner l'image avec les bons headers
+    // retourne l'image avec les bons headers
     return new Response(file, {
       headers: {
         'Content-Type': contentType,

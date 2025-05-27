@@ -42,11 +42,11 @@ const LikedPhotos = () => {
           return (
             <div key={photo.id} className="photo-card">
               <Image
-                src={finalPath} // URL correcte pour l'image
+                src={finalPath} 
                 alt={photo.title}
                 width={300}
                 height={350}
-                onClick={() => setSelectedPhoto(photo)} // Sélection de la photo au clic
+                onClick={() => setSelectedPhoto(photo)} 
                 className="rounded-lg object-contain"
               />
             </div>
@@ -60,11 +60,11 @@ const LikedPhotos = () => {
         <CardModal
           id={selectedPhoto.id}
           fullImage={`/api/uploads/images/user-uploads/${selectedPhoto.url.split('/').pop()}`}
-          username={selectedPhoto.username || "Utilisateur inconnu"} // Valeur par défaut si le username est manquant
-          avatarUrl={selectedPhoto.avatarUrl || "/default-avatar.png"} // Valeur par défaut pour l'avatar si manquant
-          description={selectedPhoto.description || "Pas de description."} // Valeur par défaut pour la description
-          onClose={() => setSelectedPhoto(null)} // Fermeture du modal
-          onDelete={(id) => console.log("delete", id)} // Logique de suppression (à adapter)
+          username={selectedPhoto.username || "Utilisateur inconnu"} 
+          avatarUrl={selectedPhoto.avatarUrl || "/default-avatar.png"} 
+          description={selectedPhoto.description || "Pas de description."} 
+          onClose={() => setSelectedPhoto(null)} 
+          onDelete={(id) => console.log("delete", id)}
         />
       )}
     </div>

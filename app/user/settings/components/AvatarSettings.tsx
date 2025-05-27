@@ -57,15 +57,15 @@ const handleSaveAvatar = async () => {
 
     if (data.avatarPath) {
       alert("Avatar mis à jour");
-      // Si l'upload est réussi,  mettre à jour l'avatar dans l'interface utilisateur
+      // Si upload,  mettre à jour l'avatar dans l'interface utilisateur
            await signIn("credentials", { // Remplacer "credentials" par la méthode d'auth utilisée
           redirect: false, // ne pas rediriger
           username: session.user.username,  // Utilise le bon paramètre de login
-          password: "",  // Si besoin de réutiliser un mot de passe, sinon laisse vide
+          password: "",  
         });
 
 
-     //Recharge la page pour appliquer les changements
+
       window.location.reload();
     } else {
       alert("Erreur lors de l'upload de l'avatar");

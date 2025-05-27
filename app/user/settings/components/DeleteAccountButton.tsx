@@ -15,7 +15,7 @@ export default function DeleteAccountButton() {
       });
   
       if (res.ok) {
-        // Déconnecter l'utilisateur après suppression
+        // deconnecte l'utilisateur après suppression
         window.location.href = "/api/auth/signout";
       } else {
         alert("Erreur lors de la suppression du compte.");

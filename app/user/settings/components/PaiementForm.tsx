@@ -23,7 +23,7 @@ export default function PaiementForm() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log('Moyen de paiement enregistré :', formData);
-    // À remplacer plus tard par Stripe
+  
   };
 
   return (

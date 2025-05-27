@@ -13,7 +13,7 @@ interface MockUser {
   password: string;
 }
 
-// Mock de Prisma
+// simulation de Prisma (prisma.user.findUnique)
 jest.mock("@/lib/prisma", () => ({
   __esModule: true,
   prisma: {
@@ -23,7 +23,7 @@ jest.mock("@/lib/prisma", () => ({
   },
 }));
 
-// Mock de bcryptjs
+//simulation de bcrypt
 jest.mock("bcryptjs", () => ({
   ...jest.requireActual("bcryptjs"),
   compare: jest.fn(),
@@ -32,6 +32,7 @@ jest.mock("bcryptjs", () => ({
 let mockUser: MockUser;
 let provider: ReturnType<typeof CredentialsProvider>;
 
+// on cree un dummy user
 beforeAll(async () => {
   mockUser = {
     id: "user1",
@@ -44,22 +45,21 @@ beforeAll(async () => {
   };
 });
 
+// excution avant chaque test
+// preparation de l'environnement de test
 beforeEach(() => {
   // Mock de prisma.user.findUnique
   (prisma.user.findUnique as jest.Mock).mockImplementation(
     async ({ where }: { where: { email: string } }) => {
-      console.log("Looking for user with email:", where.email); // Affiche l'email recherché
       if (where.email === "test@example.com") {
-        return mockUser; // Retourne mockUser uniquement si l'email est correct
+        return mockUser;
       }
-      return null; // Sinon retourne null
+      return null;
     }
   );
 
-  // Mock de bcrypt.compare
-  (compare as jest.Mock).mockResolvedValue(true); // Force la validation à true
+  (compare as jest.Mock).mockResolvedValue(true);
 
-  // Redéfinition de `provider` ici pour garantir que tout est configuré avant chaque test
   provider = CredentialsProvider({
     name: "Credentials",
     credentials: {
@@ -67,40 +67,28 @@ beforeEach(() => {
       password: { label: "Password", type: "password" },
     },
     async authorize(credentials) {
-      console.log("Received credentials:", credentials); // Afficher les credentials reçus
+      // console.log("credentials:", credentials);
 
       if (!credentials?.email || !credentials?.password) {
-        throw new Error("Email and password are required");
+        throw new Error("email ou mdp required");
       }
-
-      // Debug : Afficher l'email pour vérifier qu'il est correct
-      console.log("Calling prisma.user.findUnique with email:", credentials.email);
 
       const user = await prisma.user.findUnique({
         where: { email: credentials.email },
       });
 
-      console.log("Found user:", user); // Vérifier si l'utilisateur est trouvé
+      // console.log("user trouve:", user);
 
       if (!user || !user.password) {
-        throw new Error("No user found");
+        throw new Error("aucun user trouve");
       }
 
       const isValid = await compare(credentials.password, user.password);
-      console.log("Password valid:", isValid); // Vérifie si le mot de passe est valide
+      console.log("password valid:", isValid);
 
       if (!isValid) {
-        throw new Error("Incorrect password");
+        throw new Error("mdp incorrect");
       }
-
-      console.log("Returning user data:", {
-        id: user.id,
-        email: user.email,
-        username: user.username,
-        avatar: user.avatar ?? "",
-        isPremium: user.isPremium,
-        name: user.username,
-      });
 
       return {
         id: user.id,
@@ -114,7 +102,10 @@ beforeEach(() => {
   });
 });
 
-it("devrait échouer avec des informations invalides", async () => {
+// debut des tests|
+//test 1
+
+it("Information Invalides", async () => {
   (compare as jest.Mock).mockResolvedValue(false); // Simule une comparaison échouée
 
   const reqBody = { email: "test@example.com", password: "wrongpassword" };
@@ -127,62 +118,74 @@ it("devrait échouer avec des informations invalides", async () => {
     await provider.authorize!(reqBody, req);
   } catch (error: unknown) {
     if (error instanceof Error) {
-      expect(error.message).toBe("Incorrect password");
+      expect(error.message).toBe("mdp incorrect");
     } else {
       throw error;
     }
   }
 });
-it("devrait échouer si l'utilisateur n'existe pas dans la base de données", async () => {
-  // Simule une comparaison réussie mais sans utilisateur trouvé
+
+//test 2
+it("User non existant dans la Bdd", async () => {
+  // Simule une comparaison reussie mais sans utilisateur trouve
   (compare as jest.Mock).mockResolvedValue(true);
 
   const reqBody = { email: "nonexistent@example.com", password: "anyPassword" };
-  const req = {} as Pick<RequestInternal, "query" | "body" | "headers" | "method">;
+  const req = {} as Pick<
+    RequestInternal,
+    "query" | "body" | "headers" | "method"
+  >;
 
-  // Redéfinition de la méthode `findUnique` pour simuler un utilisateur non trouvé
   (prisma.user.findUnique as jest.Mock).mockResolvedValue(null);
 
   try {
     await provider.authorize!(reqBody, req);
   } catch (error: unknown) {
     if (error instanceof Error) {
-      expect(error.message).toBe("No user found"); // Vérifie le message d'erreur
+      expect(error.message).toBe("User non trouve");
     } else {
       throw error;
     }
   }
 });
 
-it("devrait échouer si l'email ou le mot de passe est manquant", async () => {
-  const reqBody = { email: "", password: "correctpassword" }; // Email manquant
-  const req = {} as Pick<RequestInternal, "query" | "body" | "headers" | "method">;
+//test 3
+
+it("Email ou MDP est manquant", async () => {
+  const reqBody = { email: "", password: "correctpassword" };
+  const req = {} as Pick<
+    RequestInternal,
+    "query" | "body" | "headers" | "method"
+  >;
 
   try {
     await provider.authorize!(reqBody, req);
   } catch (error: unknown) {
     if (error instanceof Error) {
-      expect(error.message).toBe("Email and password are required"); // Vérifie que l'erreur est correcte
+      expect(error.message).toBe("email and password are required");
     } else {
       throw error;
     }
   }
 });
 
-it("devrait échouer si l'email est déjà pris", async () => {
+//test 4
+it("Email est deja utilise", async () => {
   const existingUser = { ...mockUser, email: "existing@example.com" };
 
-  // Simule que l'email existe déjà dans la base de données
   (prisma.user.findUnique as jest.Mock).mockResolvedValue(existingUser);
 
   const reqBody = { email: "existing@example.com", password: "anyPassword" };
-  const req = {} as Pick<RequestInternal, "query" | "body" | "headers" | "method">;
+  const req = {} as Pick<
+    RequestInternal,
+    "query" | "body" | "headers" | "method"
+  >;
 
   try {
     await provider.authorize!(reqBody, req);
   } catch (error: unknown) {
     if (error instanceof Error) {
-      expect(error.message).toBe("Email already taken"); // Vérifie que l'erreur est correctement gérée
+      expect(error.message).toBe("l'email est deja pris");
     } else {
       throw error;
     }

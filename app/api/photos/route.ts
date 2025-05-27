@@ -5,13 +5,16 @@ import { join } from "path";
 import { getToken } from "next-auth/jwt";
 
 // POST pour uploader une image
-export async function POST(req: NextRequest) {
-  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
 
+export async function POST(req: NextRequest) {
+  //1 check if user est bien connecte
+  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+//2 si user pas auth then error 401(unauthorised)
   if (!token || !token.email) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+//3 recupere les donnees via formulaire html
   const formData = await req.formData();
 
   const title = formData.get("title")?.toString();
@@ -20,8 +23,9 @@ export async function POST(req: NextRequest) {
   const isPremium = formData.get("isPremium") === "true";
   const image = formData.get("image") as File;
 
+  //4 verifie les champs obligatoires 
   if (!title || !image) {
-    return NextResponse.json({ error: "Titre ou image manquant" }, { status: 400 });
+    return NextResponse.json({ error: "titre ou image manquante" }, { status: 400 });
   }
 
   // Créer le buffer de l'image
@@ -61,7 +65,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Utilisateur introuvable" }, { status: 404 });
   }
 
-  // Créer la photo dans la base de données
+  //3 - creer la photo dans la base de données
   const photo = await prisma.photography.create({
     data: {
       title,
@@ -79,11 +83,11 @@ export async function POST(req: NextRequest) {
   return NextResponse.json(photo, { status: 201 });
 }
 
-// GET pour récupérer les photos
+// GET pour recuperer les photos
 export async function GET() {
   const photos = await prisma.photography.findMany({
     where: {
-      isPremium: false, // 💡 n'affiche que les non-premium
+      isPremium: false, //affiche que les non-premium
     },
     include: {
       user: true,

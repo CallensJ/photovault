@@ -8,7 +8,7 @@ export default async function UserSettingsPage() {
   const session = await getServerSession(authOptions);
 
   if (!session) {
-    redirect("/auth-required"); // ou "/login"
+    redirect("/auth-required"); 
   }
 
   return <SettingsClient session={session} />;

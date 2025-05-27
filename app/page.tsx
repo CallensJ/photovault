@@ -40,25 +40,25 @@ export default function Home() {
       }
     };
 
-    // Si l'utilisateur est authentifié, on récupère les photos
+    //si l'user est auth on recupere les photos
     if (status === "authenticated") {
       fetchPhotos();
     }
-  }, [status]); // Dépend de `status` pour relancer le `fetch` lorsque la session change
+  }, [status]); 
 
   return (
     <main className="flex flex-wrap gap-4 justify-center pt-16">
       {photos.length === 0 ? (
-        <p>Aucune photo disponible pour le moment</p> // Si aucune photo n'est chargée
+        <p>Aucune photo disponible pour le moment</p> 
       ) : (
         photos.map((card) => (
           <Card
             key={card.id}
-            id={card.id} // ID est maintenant une string
+            id={card.id} 
             imageUrl={`/api/protected-image/${card.id}`} 
             title={card.title}
-            description={card.description || ""} // Si description est undefined, utilise une chaîne vide
-            avatarUrl={card.user?.avatar || "/images/avatars/dummy-avatar.png"} // Affiche l'avatar de l'utilisateur
+            description={card.description || ""}
+            avatarUrl={card.user?.avatar || "/images/avatars/dummy-avatar.png"} 
             username={card.user?.username}
             views={card.views}
             fullImage={`/api/protected-image/${card.id}`}

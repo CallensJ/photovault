@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma"; // Assure-toi que Prisma est bien configuré dans /lib/prisma
-import bcrypt from "bcryptjs"; // On utilise bcryptjs pour hasher le mot de passe
-import { z } from "zod"; // Pour valider les données
+import { prisma } from "@/lib/prisma"; 
+import bcrypt from "bcryptjs"; 
+import { z } from "zod"; 
 
 // Schéma de validation avec zod
 const signupSchema = z.object({
@@ -24,7 +24,7 @@ export async function POST(request: Request) {
 
 
 
-    // Vérifie si l'email existe déjà
+    // Vérifie si email existe deja
     const existingUser = await prisma.user.findUnique({
       where: { email },
     });
@@ -36,7 +36,7 @@ export async function POST(request: Request) {
       );
     }
 
-    // Vérifie si le pseudo existe déjà
+    // Verifie si le pseudo existe deja
     const existingUsername = await prisma.user.findUnique({
       where: { username },
     });
@@ -51,28 +51,28 @@ export async function POST(request: Request) {
     // Hash le mot de passe
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Crée un nouvel utilisateur sans affecter de variable à l'utilisateur créé
+    // Cree un nouvel utilisateur sans affecter de variable à l'utilisateur cree
     await prisma.user.create({
       data: {
         email,
         username,
-        nickname: username, // Utilise le pseudo comme valeur par défaut pour nickname
+        nickname: username, 
         password: hashedPassword,
       },
     });
 
-    // Réponse de succès
+    // Réponse de succes
     return NextResponse.json(
       { message: "Utilisateur créé avec succès !" },
       { status: 201 }
     );
   } catch (error) {
-    // Si une erreur survient
+    // si erreur
     if (error instanceof Error) {
       return NextResponse.json(
         {
           message: "Erreur lors de la création de l'utilisateur",
-          error: error.message, // Affichage de l'erreur
+          error: error.message, 
         },
         { status: 500 }
       );

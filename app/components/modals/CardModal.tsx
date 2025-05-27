@@ -125,7 +125,7 @@ export default function CardModal({
       onClick={onClose}
     >
       <div
-        className="bg-[#282c34] max-w-3xl w-[90%] max-h-[90%] overflow-y-auto rounded-xl p-6 relative"
+        className="bg-[#282c34] max-w-4xl w-[90%] max-h-[90%] overflow-y-auto rounded-xl p-6 relative"
         onClick={(e) => e.stopPropagation()}
       >
         <button
@@ -138,7 +138,7 @@ export default function CardModal({
         {/* Image principale */}
         <div className="relative w-full h-[80vh] mb-6">
           <Image
-            src={`/api/protected-image/${id}`} // Utilise l'ID ici pour appeler l'API
+            src={`/api/protected-image/${id}`} 
             alt="Image"
             className="rounded-lg object-contain"
             fill
